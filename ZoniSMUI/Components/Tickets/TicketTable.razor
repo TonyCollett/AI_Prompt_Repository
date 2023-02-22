@@ -1,0 +1,179 @@
+@inject ITicketData ticketData
+@inject NavigationManager navManager
+@inject AuthenticationStateProvider authProvider
+@inject IUserData userData
+@attribute [Authorize]
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<Ticket>>>(ServerReload))" Dense="true" Hover="true"
+    @ref="table" T="Ticket" OnRowClick="RowClick">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">@_headerText</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+            AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>
+            <MudTableSortLabel SortLabel="ty_field" Enabled="false" T="Ticket"></MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="id_field" T="Ticket">Ticket Number</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="ti_field" T="Ticket">Title</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="st_field" T="Ticket">Status</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="cb_field" T="Ticket">Created By</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="dc_field" T="Ticket">Date Created</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="at_field" T="Ticket">Assigned To</MudTableSortLabel>
+        </MudTh>
+        <MudTh>
+            <MudTableSortLabel SortLabel="lm_field" T="Ticket">Last Modified</MudTableSortLabel>
+        </MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Type">
+             <MudIcon Size="@Size.Small" Color="Color.Success" Icon="@Icons.Material.Filled.Assignment" />
+        </MudTd>
+        <MudTd DataLabel="Id">@context.TicketId</MudTd>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Status">
+            @switch (context.Status.Name)
+            {
+                case "New":
+                    <MudChip Color="Color.Secondary">@context.Status.Name</MudChip>
+                    break;
+                case "In Progress":
+                    <MudChip Color="Color.Info">@context.Status.Name</MudChip>
+                    break;
+                case "Open":
+                    <MudChip Color="Color.Primary">@context.Status.Name</MudChip>
+                    break;
+                case "Closed":
+                    <MudChip Color="Color.Error">@context.Status.Name</MudChip>
+                    break;
+                case "Resolved":
+                case "Completed":
+                    <MudChip Color="Color.Success">@context.Status.Name</MudChip>
+                    break;
+                default:
+                    <MudChip>@context.Status.Name</MudChip>
+                    break;
+            }
+        </MudTd>
+        <MudTd DataLabel="CreatedBy">@context.CreatedBy.DisplayName</MudTd>
+        <MudTd DataLabel="DateCreated">@context.DateCreated</MudTd>
+        <MudTd DataLabel="AssignedTo">@context.AssignedUser.DisplayName</MudTd>
+        <MudTd DataLabel="LastModified">@context.LastUpdatedDate</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    [Parameter]
+    public User LoggedInUser { get; set; }
+    [Parameter]
+    public bool ActiveOnly { get; set; } = false;
+
+    private string _headerText;
+
+    private MudTable<Ticket> table;
+    IEnumerable<Ticket> pagedData;
+    private int totalItems;
+    private string searchString = null;
+
+    private async Task<TableData<Ticket>> ServerReload(TableState state)
+    {
+        IEnumerable<Ticket> data = null;
+
+        if (ActiveOnly)
+        {
+            data = await ticketData.GetAllActiveTicketsAsync();
+            _headerText = "All Active Tickets";
+        }
+        else if (LoggedInUser != null)
+        {
+            data = await ticketData.GetUserAssignedTicketsAsync(LoggedInUser);
+            _headerText = "My Tickets";
+        }
+        else
+        {
+            data = await ticketData.GetAllTicketsAsync();
+            _headerText = "All Tickets";
+        }
+
+        if (data != null) {
+            data = data.Where(ticket =>
+            {
+                if (string.IsNullOrWhiteSpace(searchString))
+                    return true;
+                if (ticket.TicketId.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (ticket.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (ticket.Description.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (ticket.Status.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (ticket.CreatedBy.DisplayName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (ticket.AssignedUser.DisplayName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                return false;
+            }).ToArray();
+
+            totalItems = data.Count();
+            switch (state.SortLabel)
+            {
+                case "id_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.TicketId);
+                    break;
+                case "ti_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.Title);
+                    break;
+                case "cb_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.CreatedBy.DisplayName);
+                    break;
+                case "at_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.AssignedUser.DisplayName);
+                    break;
+                case "st_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.Status.Name);
+                    break;
+                case "dc_field":
+                    data = data.OrderByDirection(state.SortDirection, o => o.DateCreated);
+                    break;
+            }
+
+            pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        }
+
+        return new TableData<Ticket>() { TotalItems = totalItems, Items = pagedData };
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
+
+    private void RowClick(TableRowClickEventArgs<Ticket> args)
+    {
+        navManager.NavigateTo($"/Ticket/Details/{args.Item.TicketId}");
+    }
+}

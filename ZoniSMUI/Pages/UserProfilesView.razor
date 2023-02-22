@@ -1,0 +1,8 @@
+﻿@page "/Profile/{Id}"
+
+<UserProfiles UserId="@Id"/>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+}

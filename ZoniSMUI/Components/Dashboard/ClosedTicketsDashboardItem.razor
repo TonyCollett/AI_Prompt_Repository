@@ -1,0 +1,18 @@
+@inject ITicketData ticketData
+
+<MudPaper Class="pa-4" Elevation="3">
+    <MudStack AlignItems="AlignItems.Center">
+        <MudIcon Icon="@Icons.Material.Filled.Assessment" Color="Color.Primary" Size="Size.Large" />
+        <MudText Typo="Typo.h6"> Closed Tickets </MudText>
+        <MudText Typo="Typo.h4"> @closedTickets </MudText>
+    </MudStack>
+</MudPaper>
+
+@code {
+    private int closedTickets;
+
+    protected async override Task OnInitializedAsync()
+    {
+        closedTickets = await ticketData.GetClosedTicketCountAsync();
+    }
+}

@@ -1,0 +1,59 @@
+@attribute [Authorize]
+
+<AuthorizeView>
+    <Authorized>
+        <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" FullWidth="true">
+            <ActivatorContent>
+                <MudStack AlignItems="AlignItems.Center" Row="true">
+                    <MudStack Spacing="1" Justify="Justify.Center">
+                        <MudText Typo="Typo.body1">
+                            @LoggedInUser?.FirstName @LoggedInUser?.LastName
+                        </MudText>
+                        <MudText Typo="Typo.body2">
+                            @LoggedInUser?.EmailAddress
+                        </MudText>
+                    </MudStack>
+                    <MudBadge Visible="@LoggedInUser.Notifications.Any()" Content="@LoggedInUser.Notifications.Count()" Color="Color.Warning" Overlap="true" Bordered="true">
+                        <MudAvatar Color="Color.Secondary" Variant="Variant.Filled">
+                            @LoggedInUser?.Initials
+                        </MudAvatar>
+                    </MudBadge>
+                </MudStack>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem>
+                    Notifications
+                </MudMenuItem>
+                <MudMenuItem>
+                    <a href="/Profile/@LoggedInUser?.Id">
+                        Profile
+                    </a>
+                </MudMenuItem>
+                <MudMenuItem>
+                    User Settings
+                </MudMenuItem>
+                @if (LoggedInUser.UserType == UserType.Admin)
+                {
+                    <MudMenuItem>
+                        Admin Settings
+                    </MudMenuItem>
+                }
+                <MudMenuItem>
+                    <a href="MicrosoftIdentity/Account/SignOut">
+                        Logout
+                    </a>
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </Authorized>
+    <NotAuthorized>
+        <a href="MicrosoftIdentity/Account/SignIn">
+            Login
+        </a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public User LoggedInUser { get; set; }
+}

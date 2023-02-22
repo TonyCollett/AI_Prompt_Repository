@@ -1,0 +1,168 @@
+﻿@page "/Ticket/Details/{TicketId}"
+@attribute [Authorize]
+@inject AuthenticationStateProvider authProvider
+@inject NavigationManager navManager
+@inject IDialogService DialogService
+@inject ITicketData ticketData
+@inject IUserData userData
+@inject IStatusData statusData
+@inject ICategoryData categoryData
+
+@if (ticket != null)
+{
+    <MudPaper Class="pa-3" Elevation="4">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudStack Spacing="8" AlignItems="AlignItems.Center" Row="true">
+                <MudAvatar Color="Color.Warning" Variant="Variant.Filled">
+                    <MudIcon Color="Color.Dark" Icon="@Icons.Custom.Uncategorized.Radioactive" Size="Size.Large" />
+                </MudAvatar>
+                <MudStack Spacing="1" Justify="Justify.Center">
+                    <MudText Typo="Typo.body1">
+                        @ticket.TicketId
+                    </MudText>
+                    <MudText Typo="Typo.body2">
+                        @ticket.Status.Name
+                    </MudText>
+                </MudStack>
+                <MudText Typo="Typo.h5">@ticket.Title</MudText>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="10">
+            <MudStack>
+                <MudItem xs="12">
+                    <MudStack Row="true">
+                        <MudItem xs="2">
+                            <MudPaper Elevation="2" Class="pa-3">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline">Created Details</MudText>
+                                    <MudText Typo="Typo.caption">@ticket.CreatedBy.DisplayName</MudText>
+                                    <MudText Typo="Typo.caption">@ticket.DateCreated</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudPaper Elevation="2" Class="pa-3">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline">Assignment Details</MudText>
+                                    <MudText Typo="Typo.caption">@ticket.AssignedUser.DisplayName</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudPaper Elevation="2" Class="pa-3">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline">Affected User Details</MudText>
+                                    <MudText Typo="Typo.caption">@ticket.AffectedUser.DisplayName</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudPaper Elevation="2" Class="pa-3">
+                                <MudStack>
+                                    <MudText Typo="Typo.overline">Category</MudText>
+                                    <MudText Typo="Typo.caption">@ticket.Category.Name</MudText>
+                                </MudStack>
+                            </MudPaper>
+                        </MudItem>
+                    </MudStack>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTabs Outlined="true" Position="Position.Left" Rounded="true" Border="true"
+                        ApplyEffectsToContainer="true" Class="ma-3" PanelClass="pa-4">
+                        <MudTabPanel Text="General">
+                            <MudGrid>
+                                <MudItem lg="12" sm="12">
+                                    <MudTextField Variant="Variant.Outlined" T="string" Label="Title"
+                                        @bind-Value="ticket.Title" ReadOnly="true" />
+                                </MudItem>
+                                <MudItem lg="12" sm="12">
+                                    <MudTextField Variant="Variant.Outlined" T="string" Label="Description"
+                                        @bind-Value="ticket.Description" Lines="12" ReadOnly="true" />
+                                </MudItem>
+                            </MudGrid>
+                        </MudTabPanel>
+                        <MudTabPanel Text="Comments">
+                            <CommentDisplay ParentId="@ticket.Id" />
+                        </MudTabPanel>
+                        <MudTabPanel Text="History">
+                            <MudText>History</MudText>
+                        </MudTabPanel>
+                        </MudTabs>
+                    </MudItem>
+                </MudStack>
+            </MudItem>
+
+            <MudItem xs="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="EditTicket" Class="ml-auto"
+                Disabled="false">
+                    Edit
+                </MudButton>
+            </MudItem>
+
+        </MudGrid>
+
+
+    </MudPaper>
+}
+else
+{
+<MudOverlay DarkBackground="true" ZIndex="9999" AutoClose="true">
+    <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>
+}
+
+
+
+@code {
+    [Parameter] public string TicketId { get; set; } = default!;
+    [CascadingParameter(Name = "ApplicationSettings")] public List<Setting> ApplicationSettings { get; set; }
+    [CascadingParameter(Name = "LoggedInUser")] public User LoggedInUser { get; set; }
+
+    private Ticket ticket;
+
+    protected async override Task OnInitializedAsync()
+    {
+        ticket = await ticketData.GetTicketAsync(TicketId);
+    }
+
+    private async void EditTicket()
+    {
+        ZoniSMLibrary.Models.Ticket editTicket = new()
+        {
+            Title = ticket.Title,
+            Description = ticket.Description,
+            Category = ticket.Category,
+            AffectedUser = ticket.AffectedUser,
+            AssignedUser = ticket.AssignedUser,
+            OwnerNotes = ticket.OwnerNotes
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            CloseButton = true
+        };
+
+        var parameters = new DialogParameters
+        {
+            ["Ticket"] = editTicket
+        };
+
+        var dialog = DialogService.Show<TicketEdit>($"Edit Ticket {ticket.TicketId}", parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            ticket.Title = editTicket.Title;
+            ticket.Description = editTicket.Description;
+            ticket.Category = editTicket.Category;
+            ticket.AffectedUser = editTicket.AffectedUser;
+            ticket.AssignedUser = editTicket.AssignedUser;
+            ticket.OwnerNotes = editTicket.OwnerNotes;
+            StateHasChanged();
+        }
+    }
+
+}

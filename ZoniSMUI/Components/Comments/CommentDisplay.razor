@@ -1,0 +1,39 @@
+﻿@attribute [Authorize]
+@inject AuthenticationStateProvider authProvider
+@inject IUserData userData
+@inject ICommentData commentData
+
+@if (comments != null)
+{
+    <MudStack>
+        @foreach (Comment comment in comments)
+        {
+            if (ParentId == comment.ParentId && !comment.Archived)
+            {
+                <MudPaper>
+                    <MudText>@(comment.IsPrivate ? "Private Comment added on" : "Public Comment added on") @comment.AddedDate by
+                        @comment.CommentedByName</MudText>
+                    <MudText>@comment.CommentText</MudText>
+
+                </MudPaper>
+            }
+        }
+
+    </MudStack>
+}
+
+
+@code {
+    [Parameter]
+    public string ParentId { get; set; } = default!;
+
+    private User loggedInUser;
+    private IEnumerable<Comment> comments;
+
+    protected async override Task OnInitializedAsync()
+    {
+        loggedInUser = await authProvider.GetUserFromAuth(userData);
+        comments = await commentData.GetCommentsByParentIdAsync(ParentId);
+
+    }
+}

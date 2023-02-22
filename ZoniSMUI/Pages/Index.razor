@@ -1,0 +1,35 @@
+﻿@page "/"
+@attribute [Authorize]
+
+<MudGrid>
+    <MudItem xs="4">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full pa-8">
+            <TicketsByCategoryDashboardItem />
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="4">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full pa-8">
+            <NotificationsDashboard />
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="4">
+        <MudPaper Class="d-flex align-center justify-center mud-width-full pa-8">
+            <TotalCategoriesDashboardItem />
+            <TotalOpenTicketsDashboardItem />
+            <ClosedTicketsDashboardItem />
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudPaper Class="align-center justify-center mud-width-full">
+            @if(LoggedInUser != null) {
+                <TicketTable LoggedInUser="LoggedInUser" />
+            } 
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    [CascadingParameter(Name = "ApplicationSettings")] public List<ZoniSMLibrary.Models.Setting> ApplicationSettings { get; set; }
+    [CascadingParameter(Name = "LoggedInUser")] public User LoggedInUser { get; set; }
+
+}

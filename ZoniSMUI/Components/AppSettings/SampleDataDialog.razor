@@ -1,0 +1,221 @@
+@inject ICategoryData categoryData
+@inject IStatusData statusData
+@inject ICommentData commentData
+@inject IUserData userData
+@inject ITicketData ticketData
+@inject ISettingsData settingsData
+@inject IDbConnection dbConnection
+@using CountryData
+@using CountryData.Bogus
+@namespace ZoniSMUI.Components.AppSettings
+
+<MudOverlay @bind-Visible="showLoadingArt" DarkBackground="true" ZIndex="9999" AutoClose="true">
+     <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>
+
+<MudDialog>
+    <DialogContent>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="GenerateRandomUsers">
+            Generate Sample Random User Data
+        </MudButton>
+        <MudDivider />
+        <MudButton Variant="Variant.Outlined" Color="Color.Info" @onclick="GenerateStatusValuesAsync">
+            Generate Status List
+        </MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Info" @onclick="GenerateCategoryValuesAsync">
+            Generate Category List
+        </MudButton>
+        <MudDivider />
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="GenerateSampleTicketData">
+            Generate Sample Ticket Data
+        </MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="GenerateRandomCommentsAsync">
+            Generate Sample Comments Data
+        </MudButton>
+        <MudDivider />
+        <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick="ClearAllData">
+            Clear All Data
+        </MudButton>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="(() => MudDialog.Close(DialogResult.Ok(true)))">Done</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public User LoggedInUser { get; set; }
+
+    private bool showLoadingArt;
+
+    private List<Category> categories;
+    private List<Status> statuses;
+    private List<User> users;
+    private List<Ticket> tickets;
+
+    protected async override Task OnInitializedAsync()
+    {
+        showLoadingArt = true;
+
+        categories = await categoryData.GetAllCategoriesAsync();
+        statuses = await statusData.GetAllStatusesAsync();
+        users = await userData.GetAllUsersAsync();
+        tickets = await ticketData.GetAllTicketsAsync();
+
+        showLoadingArt = false;
+    }
+
+    private async Task GenerateRandomUsers()
+    {
+        showLoadingArt = true;
+        StateHasChanged();
+
+        var fakeUsers = new Faker<User>()
+            .RuleFor<string>(u => u.ObjectIdentifier, f => f.Random.Guid().ToString())
+            .RuleFor<string>(u => u.FirstName, f => f.Name.FirstName())
+            .RuleFor<string>(u => u.LastName, f => f.Name.LastName())
+            .RuleFor<string>(u => u.EmailAddress, f => f.Internet.Email())
+            .RuleFor<string>(u => u.AddressLine1, f => f.Address.StreetAddress())
+            .RuleFor<string>(u => u.AddressLine2, f => f.Address.CardinalDirection())
+            .RuleFor<string>(u => u.AddressLine3, String.Empty)
+            .RuleFor<string>(u => u.State, f => f.Country().Australia().State().Name)
+            .RuleFor<string>(u => u.City, f => f.Country().Australia().Province().Name)
+            .RuleFor<string>(u => u.Country, f => f.Country().Australia().Name)
+            .RuleFor<string>(u => u.PostCode, f => f.Country().Australia().PostCode())
+            .RuleFor<UserType>(u => u.UserType, f => f.PickRandom<UserType>())
+            .RuleFor<List<Ticket>>(u => u.CreatedTickets, f => new List<Ticket>())
+            .RuleFor<List<Notification>>(u => u.Notifications, f => new List<Notification>());
+
+        await userData.CreateMultipleUsersAsync(fakeUsers.Generate(100));
+
+        showLoadingArt = false;
+        StateHasChanged();
+    }
+
+    private async Task GenerateSampleTicketData()
+    {
+        showLoadingArt = true;
+        StateHasChanged();
+
+        int i = 1;
+
+        var fakeTickets = new Faker<Ticket>()
+            .RuleFor<string>(w => w.TicketId, f => i++.ToString("000000"))
+            .RuleFor<string>(w => w.Title, f => f.Lorem.Sentence())
+            .RuleFor<string>(w => w.Description, f => f.Lorem.Paragraph())
+            .RuleFor<DateTime>(w => w.DateCreated, f => f.Date.Recent())
+            .RuleFor<User>(w => w.CreatedBy, f => f.PickRandom(users))
+            .RuleFor<DateTime>(w => w.LastUpdatedDate, f => f.Date.Recent())
+            .RuleFor<User>(w => w.LastUpdatedBy, f => f.PickRandom(users))
+            .RuleFor<Category>(w => w.Category, f => f.PickRandom(categories))
+            .RuleFor<Status>(w => w.Status, f => f.PickRandom(statuses))
+            .RuleFor<User>(w => w.AssignedUser, f => f.PickRandom(users))
+            .RuleFor<User>(w => w.AffectedUser, f => f.PickRandom(users));
+
+        var tickets = fakeTickets.GenerateBetween(1000, 3000);
+
+        //await settingsData.UpdateSettingAsync("LastUsedWIID", i.ToString("00000"));
+        await ticketData.CreateMultipleTicketsAsync(tickets);
+
+        showLoadingArt = false;
+        StateHasChanged();
+    }
+
+    private async Task GenerateRandomCommentsAsync()
+    {
+        showLoadingArt = true;
+        StateHasChanged();
+
+        var user = await userData.GetUserByBsonIdAsync("625f8bd7c5431eefd557e828"); //Tony Collett user
+
+        var fakeComments = new Faker<Comment>()
+            .RuleFor<string>(c => c.ParentId, f => f.PickRandom(tickets).Id)
+            .RuleFor<User>(c => c.CommentedBy, f => f.PickRandom(users))
+            .RuleFor<string>(c => c.CommentText, f => f.Lorem.Paragraph())
+            .RuleFor<bool>(c => c.Archived, f => f.Random.Bool())
+            .RuleFor<bool>(c => c.IsPrivate, f => f.Random.Bool());
+
+        await commentData.CreateMultipleCommentsAsync(fakeComments.Generate(12500));
+
+        showLoadingArt = false;
+        StateHasChanged();
+    }
+
+    private async Task GenerateStatusValuesAsync()
+    {
+        List<Status> statuses = new List<Status>() {
+            new Status { Name = "New", Description = "A new ticket", Colour = "Blue"},
+            new Status { Name = "Active", Description = "Ticket is being worked on", Colour = "Green"},
+            new Status { Name = "Pending", Description = "Ticket has stalled", Colour = "Yellow"},
+            new Status { Name = "Pending Information", Description = "Ticket requires more information", Colour = "Yellow"},
+            new Status { Name = "Pending User", Description = "Ticket requires Affected User input", Colour = "Yellow"},
+            new Status { Name = "Pending Analyst", Description = "Ticket requires Analyst input", Colour = "Yellow"},
+            new Status { Name = "Resolved", Description = "Ticket has been resolved", Colour = "Purple"},
+            new Status { Name = "Cancelled", Description = "Ticket has been cancelled", Colour = "Red"},
+            new Status { Name = "Closed", Description = "Ticket is closed", Colour = "Red"}
+        };
+
+        foreach (var status in statuses)
+        {
+            status.SetModifiedByAndDateTime("EXAMPLE DATA");
+        }
+
+        await statusData.CreateMultipleStatusesAsync(statuses);
+    }
+
+    private async Task GenerateCategoryValuesAsync()
+    {
+        List<Category> categories = new List<Category>()
+        {
+            new Category { Name = "Bug", Description = "A fault has been found", Colour = "Yellow" },
+            new Category { Name = "Questions", Description = "For user questions about the topic", Colour = "Blue" },
+            new Category { Name = "New Installation", Description = "New configuration and installation", Colour = "Red" },
+            new Category { Name = "Support", Description = "For support requests", Colour = "Green" }
+        };
+       
+
+        foreach (var category in categories)
+        {
+            category.SetModifiedByAndDateTime("EXAMPLE DATA");
+        }
+
+        await categoryData.CreateMultipleCategoriesAsync(categories);
+    }
+
+    private async Task ClearAllData()
+    {
+
+        showLoadingArt = true;
+        StateHasChanged();
+
+        await dbConnection.DropAllDataCollectionsAsync();
+
+        //Create Backup Admin User
+        var tonyAdmin = new User()
+            {
+                ObjectIdentifier = "22dd62f7-13fc-4c1c-955c-3b93d0cebc73",
+                FirstName = "Tony",
+                LastName = "Collett",
+                EmailAddress = "tony.collett@outlook.com",
+                City = "Victor Harbor",
+                AddressLine1 = "123 Fake Street",
+                Country = "Australia",
+                PostCode = "5211",
+                State = "South Australia",
+                UserType = UserType.Admin,
+                UserSettings = new UserSettings()
+                {
+                    IsUserVIP = true,
+                    IsUserArchived = false,
+                    IsUserEnabled = true,
+                    PreferredName = "Tony"
+                },
+                Notifications = new List<Notification>()
+            };
+
+        await userData.CreateUserAsync(tonyAdmin);
+
+        showLoadingArt = false;
+        StateHasChanged();
+    }
+}
