@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ZoniSMLibrary\BlepItLibrary.csproj" />
+    <ProjectReference Include="..\BlepItLibrary\BlepItLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>
