@@ -1,4 +1,4 @@
-﻿namespace ZoniSMLibrary.Models;
+﻿namespace BlepItLibrary.Models;
 public class Comment
 {
     [BsonId]
@@ -9,6 +9,5 @@ public class Comment
     public User CommentedBy { get; set; }
     public string CommentedByName { get => CommentedBy.DisplayName; }
     public DateTime AddedDate { get; set; } = DateTime.UtcNow;
-    public bool IsPrivate { get; set; }
     public bool Archived { get; set; }
 }

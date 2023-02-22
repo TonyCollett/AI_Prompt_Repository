@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using MongoDB.Driver;
 
-namespace ZoniSMLibrary.DataAccess;
+namespace BlepItLibrary.DataAccess;
 public class MongoNotificationData : INotificationData
 {
     private readonly IDbConnection _db;

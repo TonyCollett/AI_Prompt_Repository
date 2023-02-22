@@ -1,0 +1,99 @@
+﻿@page "/Prompt/Create"
+@attribute [Authorize]
+@inject AuthenticationStateProvider authProvider
+@inject NavigationManager navManager
+@inject IUserData userData
+@inject IPromptData promptData
+@inject IDbConnection dbConnection
+@inject ISnackbar Snackbar
+
+<MudOverlay @bind-Visible="showLoadingArt" DarkBackground="true" ZIndex="9999" AutoClose="true">
+     <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+</MudOverlay>
+
+<EditForm Model="createdPrompt" OnValidSubmit="CreatePrompt">
+    <MudPaper Class="pa-16 ma-2" Elevation="3" Square="true">
+        <MudTabs Outlined="true" Position="Position.Left" Rounded="true" Border="true" ApplyEffectsToContainer="true"
+            Class="mt-8" PanelClass="pa-6" @ref="tabs" @bind-ActivePanelIndex="activeTab">
+            <MudTabPanel Text="General">
+                <MudGrid>
+                    <MudItem lg="12" sm="12">
+                        <MudTextField Variant="Variant.Outlined" T="string" Label="Title" @bind-Value="createdPrompt.Title" Required="true" RequiredError="Title is required!" />
+                    </MudItem>
+                    <MudItem lg="12" sm="12">
+                        <MudTextField Variant="Variant.Outlined" T="string" Label="Description" @bind-Value="createdPrompt.Description" Lines="5" />
+                    </MudItem>
+                    <MudItem lg="4" sm="12">
+                        <MudAutocomplete Variant="Variant.Outlined" T="User" Label="Assigned User" @bind-Value="createdPrompt.AssignedUser"
+                            SearchFunc="@UserLookup" ToStringFunc="@(e=> e==null?null : $"{e.DisplayName}")" />
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+            <MudTabPanel Text="Attachments">
+                <FileUpload />
+            </MudTabPanel>
+        </MudTabs>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Create</MudButton>
+    </MudPaper>
+
+</EditForm>
+
+
+@code {
+    [CascadingParameter(Name = "LoggedInUser")] public User LoggedInUser { get; set; }
+
+    private int activeTab = 0;
+    MudTabs tabs;
+    private bool showLoadingArt = false;
+
+    public class CreatePromptModel
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public User AffectedUser { get; set; }
+        public User AssignedUser { get; set; }
+        public bool Archived { get; set; } = false;
+        public IEnumerable<byte[]> Attachments { get; set; }
+    }
+
+    CreatePromptModel createdPrompt = new();
+    private User loggedInUser;
+    private List<User> userList;
+
+    protected async override Task OnInitializedAsync()
+    {
+        showLoadingArt = true;
+
+        loggedInUser = await authProvider.GetUserFromAuth(userData);
+
+        userList = await userData.GetAllUsersAsync();
+        showLoadingArt = false;
+    }
+
+    protected async Task CreatePrompt()
+    {
+        var prompt = new Prompt
+            {
+                Title = createdPrompt.Title,
+                Description = createdPrompt.Description,
+                CreatedBy = loggedInUser,
+                LastUpdatedBy = loggedInUser,
+                Archived = createdPrompt.Archived,
+                Attachments = createdPrompt.Attachments
+            };
+
+        await promptData.CreatePromptAsync(prompt);
+        Snackbar.Add("Save Successful");
+        navManager.NavigateTo($"/");
+    }
+
+    private async Task<IEnumerable<User>> UserLookup(string value)
+    {
+        await Task.Delay(10);
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value)){
+            return userList.ToList();
+        }
+        return userList.Where(x => x.DisplayName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

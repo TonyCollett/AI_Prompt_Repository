@@ -1,4 +1,4 @@
-﻿namespace ZoniSMLibrary.Models.Base;
+﻿namespace BlepItLibrary.Models.Base;
 
 public class EntityObjectModifedBy
 {

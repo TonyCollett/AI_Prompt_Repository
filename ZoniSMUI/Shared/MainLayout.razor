@@ -2,7 +2,6 @@
 @inject NavigationManager navManager
 @inject AuthenticationStateProvider authProvider
 @inject IUserData userData
-@inject ISettingsData settingsData
 @attribute [Authorize]
 
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
@@ -11,13 +10,13 @@
     MaxWidth="MaxWidth.Large"/>
 <MudSnackbarProvider />
 
-<PageTitle>@_applicationName</PageTitle>
+<PageTitle>BlepIt</PageTitle>
 <AuthorizeView>
     <Authorized>
         <MudLayout>
             <MudAppBar Elevation="1" Dense="false">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-                <MudText Class="pl-4" Typo="Typo.h4" @onclick="GoHome">@_applicationName</MudText>
+                <MudText Class="pl-4" Typo="Typo.h4" @onclick="GoHome">BlepIt</MudText>
                 <MudSpacer />
                 <MudStack AlignItems="AlignItems.Center" Row="true">
                     <MudDivider Vertical="true" FlexItem="true" />
@@ -32,32 +31,21 @@
             </MudAppBar>
             <MudDrawer @bind-Open="@open" ClipMode="clipMode" Elevation="1" Variant="@DrawerVariant.Mini">
                 <MudNavMenu Bordered="true">
-                    <MudNavGroup Title="Task Management" Icon="@Icons.Material.Filled.Workspaces" Expanded="true">
-                        <MudNavLink @onclick="@(() => NavigateTo("Tickets"))" Icon="@Icons.Material.Filled.ReportProblem">
-                            Tickets
-                        </MudNavLink>
-                        <MudNavLink @onclick="@(() => NavigateTo("Tickets/Active"))" Icon="@Icons.Material.Filled.GroupWork">
-                            Active Tickets
+                    <MudNavGroup Title="Prompts" Icon="@Icons.Material.Filled.Workspaces" Expanded="true">
+                        <MudNavLink @onclick="@(() => NavigateTo("Prompts"))" Icon="@Icons.Material.Filled.ReportProblem">
+                            Prompts
                         </MudNavLink>
                     </MudNavGroup>
                     <MudNavLink @onclick="@(() => NavigateTo("Settings"))" Icon="@Icons.Material.Filled.VerifiedUser">
                         Users
-                    </MudNavLink>
-                    <MudNavLink @onclick="@(() => NavigateTo("Settings"))" Icon="@Icons.Material.Filled.List">
-                        Categories
-                    </MudNavLink>
-                    <MudNavLink @onclick="@(() => NavigateTo("Settings"))" Icon="@Icons.Material.Filled.AdminPanelSettings">
-                        Settings
                     </MudNavLink>
                 </MudNavMenu>
             </MudDrawer>
 
             <MudMainContent Class="pt-16 px-5 pb-15">
                 <MudContainer Class="mt-4" MaxWidth="MaxWidth.ExtraExtraLarge">
-                    <CascadingValue Value="@_applicationSettings" Name="ApplicationSettings">
-                        <CascadingValue Value="@_loggedInUser" Name="LoggedInUser">
-                            @Body
-                        </CascadingValue>
+                    <CascadingValue Value="@_loggedInUser" Name="LoggedInUser">
+                        @Body
                     </CascadingValue>
                 </MudContainer>
             </MudMainContent>
@@ -71,8 +59,8 @@
                     </MudButton>
                 </ActivatorContent>
                 <ChildContent>
-                    <MudMenuItem Href="/Ticket/Create/">
-                        Ticket
+                    <MudMenuItem Href="/Prompt/Create/">
+                        Prompt
                     </MudMenuItem>
                 </ChildContent>
                 </MudMenu>
@@ -88,8 +76,6 @@
     bool open = true;
     DrawerClipMode clipMode = DrawerClipMode.Always;
     private User _loggedInUser;
-    private List<Setting> _applicationSettings;
-    private string _applicationName;
 
     protected async override Task OnInitializedAsync()
     {
@@ -111,8 +97,6 @@
         }
 
         _loggedInUser = await authProvider.GetUserFromAuth(userData);
-        _applicationSettings = await settingsData.GetAllSettingsAsync();
-        _applicationName = "ZoniSM"; //_applicationSettings.Where(x => x.Name == "ApplicationName").Select(x => x.Value).First();
     }
 
     private MudTheme _theme = new();

@@ -1,8 +1,7 @@
-﻿namespace ZoniSMLibrary.Models;
+﻿namespace BlepItLibrary.Models;
 
 public class UserSettings
 {
-    public string PreferredName { get; set; }
     public bool IsUserArchived { get; set; } = false;
     public bool IsUserEnabled { get; set; } = true;
     public string PreferredLanguage { get; set; }

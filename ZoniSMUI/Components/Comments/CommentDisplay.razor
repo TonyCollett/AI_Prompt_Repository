@@ -11,10 +11,7 @@
             if (ParentId == comment.ParentId && !comment.Archived)
             {
                 <MudPaper>
-                    <MudText>@(comment.IsPrivate ? "Private Comment added on" : "Public Comment added on") @comment.AddedDate by
-                        @comment.CommentedByName</MudText>
                     <MudText>@comment.CommentText</MudText>
-
                 </MudPaper>
             }
         }

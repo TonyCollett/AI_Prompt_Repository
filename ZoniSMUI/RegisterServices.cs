@@ -2,9 +2,8 @@
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using MudBlazor.Services;
-using ZoniSMUI.Services;
 
-namespace ZoniSMUI;
+namespace BlepItUI;
 
 public static class RegisterServices
 {
@@ -16,8 +15,8 @@ public static class RegisterServices
         builder.Services.AddMemoryCache();
         builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 
-        builder.Services.AddScoped<NotificationService>();
-        builder.Services.AddHostedService<AutoCloseService>();
+        //builder.Services.AddScoped<NotificationService>();
+        //builder.Services.AddHostedService<AutoCloseService>();
 
         builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
@@ -31,12 +30,9 @@ public static class RegisterServices
         });
 
         builder.Services.AddSingleton<IDbConnection, DbConnection>();
-        builder.Services.AddTransient<ICategoryData, MongoCategoryData>();
-        builder.Services.AddTransient<IStatusData, MongoStatusData>();
         builder.Services.AddTransient<IUserData, MongoUserData>();
-        builder.Services.AddTransient<ITicketData, MongoTicketData>();
+        builder.Services.AddTransient<IPromptData, MongoPromptData>();
         builder.Services.AddTransient<ICommentData, MongoCommentData>();
-        builder.Services.AddTransient<ISettingsData, MongoSettingsData>();
         builder.Services.AddTransient<INotificationData, MongoNotificationData>();
     }
 }

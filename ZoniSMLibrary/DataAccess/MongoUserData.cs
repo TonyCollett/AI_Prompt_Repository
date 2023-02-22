@@ -1,4 +1,4 @@
-﻿namespace ZoniSMLibrary.DataAccess;
+﻿namespace BlepItLibrary.DataAccess;
 public class MongoUserData : IUserData
 {
     private readonly IMongoCollection<User> _users;

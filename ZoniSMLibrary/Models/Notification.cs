@@ -1,4 +1,4 @@
-﻿namespace ZoniSMLibrary.Models;
+﻿namespace BlepItLibrary.Models;
 
 public class Notification
 {

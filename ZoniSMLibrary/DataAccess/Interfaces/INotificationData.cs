@@ -1,4 +1,4 @@
-﻿namespace ZoniSMLibrary.DataAccess.Interfaces;
+﻿namespace BlepItLibrary.DataAccess.Interfaces;
 
 public interface INotificationData
 {

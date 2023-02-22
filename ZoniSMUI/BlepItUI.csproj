@@ -17,11 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ZoniSMLibrary\ZoniSMLibrary.csproj" />
+    <ProjectReference Include="..\ZoniSMLibrary\BlepItLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

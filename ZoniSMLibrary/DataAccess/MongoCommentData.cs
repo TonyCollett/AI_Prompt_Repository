@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
-namespace ZoniSMLibrary.DataAccess;
+namespace BlepItLibrary.DataAccess;
 public class MongoCommentData : ICommentData
 {
     private readonly IMemoryCache _cache;

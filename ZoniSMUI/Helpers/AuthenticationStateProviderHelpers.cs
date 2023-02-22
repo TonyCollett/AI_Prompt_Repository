@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace ZoniSMUI.Helpers;
+namespace BlepItUI.Helpers;
 
 public static class AuthenticationStateProviderHelpers
 {
