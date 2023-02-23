@@ -1,0 +1,25 @@
+@if(Prompt != null){
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderAvatar>
+                <MudAvatar Color="Color.Secondary">GPT</MudAvatar>
+            </CardHeaderAvatar>
+            <CardHeaderContent>
+                <MudText Typo="Typo.body1">@Prompt.Title</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        @* <MudCardMedia Image="images/pilars.jpg" Height="250" /> *@
+        <MudCardContent>
+            <MudText Typo="Typo.body2">@Prompt.Description</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" />
+            <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+        </MudCardActions>
+    </MudCard>
+}
+
+@code {
+    [Parameter] 
+    public BlepItLibrary.Models.Prompt Prompt { get; set; }
+}
