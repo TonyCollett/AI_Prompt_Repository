@@ -1,4 +1,5 @@
 ﻿@page "/Prompt/Create"
+@using BlepItLibrary.Enums;
 @attribute [Authorize]
 @inject AuthenticationStateProvider authProvider
 @inject NavigationManager navManager
@@ -23,10 +24,6 @@
                     <MudItem lg="12" sm="12">
                         <MudTextField Variant="Variant.Outlined" T="string" Label="Description" @bind-Value="createdPrompt.Description" Lines="5" />
                     </MudItem>
-                    <MudItem lg="4" sm="12">
-                        <MudAutocomplete Variant="Variant.Outlined" T="User" Label="Assigned User" @bind-Value="createdPrompt.AssignedUser"
-                            SearchFunc="@UserLookup" ToStringFunc="@(e=> e==null?null : $"{e.DisplayName}")" />
-                    </MudItem>
                 </MudGrid>
             </MudTabPanel>
             <MudTabPanel Text="Attachments">
@@ -40,8 +37,6 @@
 
 
 @code {
-    [CascadingParameter(Name = "LoggedInUser")] public User LoggedInUser { get; set; }
-
     private int activeTab = 0;
     MudTabs tabs;
     private bool showLoadingArt = false;
@@ -50,9 +45,7 @@
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public User AffectedUser { get; set; }
-        public User AssignedUser { get; set; }
-        public bool Archived { get; set; } = false;
+        public Status Status { get; set; } = Status.Active;
         public IEnumerable<byte[]> Attachments { get; set; }
     }
 
@@ -78,7 +71,7 @@
                 Description = createdPrompt.Description,
                 CreatedBy = loggedInUser,
                 LastUpdatedBy = loggedInUser,
-                Archived = createdPrompt.Archived,
+                Status = createdPrompt.Status,
                 Attachments = createdPrompt.Attachments
             };
 

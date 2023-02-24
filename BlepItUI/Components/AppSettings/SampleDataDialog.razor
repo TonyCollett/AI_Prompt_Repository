@@ -46,7 +46,7 @@
         showLoadingArt = true;
 
         users = await userData.GetAllUsersAsync();
-        prompts = await promptData.GetAllPromptsAsync();
+        prompts = await promptData.GetAllActivePromptsAsync();
 
         showLoadingArt = false;
     }

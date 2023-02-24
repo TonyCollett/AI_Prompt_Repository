@@ -1,3 +1,5 @@
+using BlepItLibrary.Enums;
+
 namespace BlepItLibrary.Models;
 
 public class Prompt
@@ -11,6 +13,6 @@ public class Prompt
     public User CreatedBy { get; set; }
     public DateTime LastUpdatedDate { get; set; } = DateTime.UtcNow;
     public User LastUpdatedBy { get; set; }
-    public bool Archived { get; set; }
+    public Status Status { get; set; }
     public IEnumerable<byte[]> Attachments { get; set; } = new List<byte[]>(5);
 }

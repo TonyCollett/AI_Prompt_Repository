@@ -2,7 +2,6 @@
 @inject NavigationManager navManager
 @inject AuthenticationStateProvider authProvider
 @inject IUserData userData
-@attribute [Authorize]
 
 <MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 <MudDialogProvider 
@@ -14,28 +13,40 @@
 <AuthorizeView>
     <Authorized>
         <MudLayout>
-            <MudAppBar Elevation="1" Dense="false">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+            <MudAppBar Dense="false">
                 <MudText Class="pl-4" Typo="Typo.h4" @onclick="GoHome">BlepIt</MudText>
                 <MudSpacer />
                 <MudStack AlignItems="AlignItems.Center" Row="true">
                     <MudDivider Vertical="true" FlexItem="true" />
                     <MudToggleIconButton @bind-Toggled="@_isDarkMode" 
                         Color="Color.Surface" Icon="@Icons.Material.Filled.DarkMode"
-                                         ToggledColor="Color.Primary" ToggledIcon="@Icons.Material.Filled.LightMode" />
+                        ToggledColor="Color.Primary" ToggledIcon="@Icons.Material.Filled.LightMode" />
                     <MudDivider Vertical="true" FlexItem="true" />
                     @if(_loggedInUser != null) {
                     <LoginDisplay LoggedInUser="@_loggedInUser" />
                     }
                 </MudStack>
             </MudAppBar>
-            <MudDrawer @bind-Open="@open" ClipMode="clipMode" Elevation="1" Variant="@DrawerVariant.Mini">
-                <MudNavMenu Bordered="true">
-                    <MudNavGroup Title="Prompts" Icon="@Icons.Material.Filled.Workspaces" Expanded="true">
-                        <MudNavLink @onclick="@(() => NavigateTo("Prompts"))" Icon="@Icons.Material.Filled.ReportProblem">
-                            Prompts
-                        </MudNavLink>
-                    </MudNavGroup>
+            <MudDrawer Open="true" ClipMode="clipMode" Elevation="1" Variant="@DrawerVariant.Mini">
+                <MudNavMenu Bordered="false">
+                    <MudButton Class="pa-2 ma-2" Href="/Prompt/Create/" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary">
+                        Create Prompt
+                    </MudButton>
+                    <MudNavLink @onclick="@(() => NavigateTo("TrendingPrompts"))" Icon="@Icons.Material.Filled.ReportProblem">
+                        Trending Prompts
+                    </MudNavLink>
+                    <MudNavLink @onclick="@(() => NavigateTo("TopPrompts"))" Icon="@Icons.Material.Filled.ReportProblem">
+                        Top Prompts
+                    </MudNavLink>
+                    <MudNavLink @onclick="@(() => NavigateTo("RandomPrompt"))" Icon="@Icons.Material.Filled.ReportProblem">
+                        Random Prompt
+                    </MudNavLink>
+                    @if(_loggedInUser != null)
+                    {
+                    <MudNavLink @onclick="@(() => NavigateTo("MyPrompts"))" Icon="@Icons.Material.Filled.ReportProblem">
+                        My Prompts
+                    </MudNavLink>
+                    }
                     <MudNavLink @onclick="@(() => NavigateTo("Settings"))" Icon="@Icons.Material.Filled.VerifiedUser">
                         Users
                     </MudNavLink>
@@ -49,22 +60,6 @@
                     </CascadingValue>
                 </MudContainer>
             </MudMainContent>
-
-            <MudAppBar Bottom="true" Fixed="true" Dense="true">
-                <MudSpacer />
-                <MudMenu ActivationEvent="@MouseEvent.LeftClick" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.BottomRight">
-                <ActivatorContent>
-                    <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary">
-                        Quick Create
-                    </MudButton>
-                </ActivatorContent>
-                <ChildContent>
-                    <MudMenuItem Href="/Prompt/Create/">
-                        Prompt
-                    </MudMenuItem>
-                </ChildContent>
-                </MudMenu>
-            </MudAppBar>
         </MudLayout>
     </Authorized>
     <NotAuthorized>

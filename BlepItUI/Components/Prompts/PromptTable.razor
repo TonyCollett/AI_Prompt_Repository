@@ -2,7 +2,6 @@
 @inject NavigationManager navManager
 @inject AuthenticationStateProvider authProvider
 @inject IUserData userData
-@attribute [Authorize]
 
 <MudTable ServerData="@(new Func<TableState, Task<TableData<Prompt>>>(ServerReload))" Dense="true" Hover="true"
     @ref="table" T="Prompt" OnRowClick="RowClick">
@@ -48,11 +47,6 @@
 </MudTable>
 
 @code {
-    [Parameter]
-    public User LoggedInUser { get; set; }
-    [Parameter]
-    public bool ActiveOnly { get; set; } = false;
-
     private string _headerText;
 
     private MudTable<Prompt> table;
@@ -60,11 +54,17 @@
     private int totalItems;
     private string searchString = null;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+    }
+
     private async Task<TableData<Prompt>> ServerReload(TableState state)
     {
         IEnumerable<Prompt> data = null;
 
-        data = await promptData.GetAllPromptsAsync();
+        data = await promptData.GetAllActivePromptsAsync();
         _headerText = "All Prompts";
 
         if (data != null) {

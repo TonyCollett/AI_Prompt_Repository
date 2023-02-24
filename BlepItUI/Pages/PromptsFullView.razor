@@ -1,0 +1,22 @@
+@page "/Prompts/"
+@inject IPromptData promptData
+@inject NavigationManager navManager
+@inject AuthenticationStateProvider authProvider
+@inject IUserData userData
+
+@if (PromptList.Any())
+{
+    foreach (var prompt in PromptList)
+    {
+        <PromptCard Prompt="prompt" />
+    }
+}
+
+@code {
+    private List<Prompt> PromptList = new List<Prompt>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        PromptList = await promptData.GetAllActivePromptsAsync();
+    }
+}

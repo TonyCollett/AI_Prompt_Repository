@@ -1,15 +1,7 @@
 ﻿@page "/"
 @attribute [Authorize]
 
-<MudGrid>
-    <MudItem xs="12">
-        <MudPaper Class="align-center justify-center mud-width-full">
-            @if(LoggedInUser != null) {
-                <PromptTable LoggedInUser="LoggedInUser" />
-            } 
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+<PromptsFullView />
 
 @code {
     [CascadingParameter(Name = "LoggedInUser")] public User LoggedInUser { get; set; }

@@ -17,12 +17,12 @@ public class MongoPromptData : IPromptData
         _promptCollection = db.PromptCollection;
     }
 
-    public async Task<List<Prompt>> GetAllPromptsAsync()
+    public async Task<List<Prompt>> GetAllActivePromptsAsync()
     {
         var output = _cache.Get<List<Prompt>>(CacheName);
         if (output is null)
         {
-            var results = await _promptCollection.FindAsync(t => t.Archived == false);
+            var results = await _promptCollection.FindAsync(t => t.Status == Enums.Status.Active);
             output = results.ToList();
 
             _cache.Set(CacheName, output, TimeSpan.FromMinutes(1));
@@ -30,7 +30,7 @@ public class MongoPromptData : IPromptData
 
         return output;
     }
-    
+
     public async Task<Prompt> GetPromptAsync(string id)
     {
         IAsyncCursor<Prompt> results = await _promptCollection.FindAsync(t => t.Id == id);
