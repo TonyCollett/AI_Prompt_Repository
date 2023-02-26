@@ -10,18 +10,17 @@
 
 <EditForm Model="createdPrompt" OnValidSubmit="CreatePrompt">
     <MudPaper Class="pa-16 ma-2" Elevation="3" Square="true">
-                <MudGrid>
-                    <MudItem lg="12" sm="12">
-                        <MudTextField Variant="Variant.Outlined" T="string" Label="Title" @bind-Value="createdPrompt.Title" Required="true" RequiredError="Title is required!" />
-                    </MudItem>
-                    <MudItem lg="12" sm="12">
-                        <MudTextField Variant="Variant.Outlined" T="string" Label="Description" @bind-Value="createdPrompt.Description" Lines="5" />
-                    </MudItem>
-                </MudGrid>
-                <FileUpload />
+        <MudGrid>
+            <MudItem lg="12" sm="12">
+                <MudTextField Variant="Variant.Outlined" T="string" Label="Prompt" @bind-Value="createdPrompt.Title" Lines="3" Required="true" RequiredError="You need prompt text to create a Blep" />
+            </MudItem>
+            <MudItem lg="12" sm="12">
+                <MudTextField Variant="Variant.Outlined" T="string" Label="Response" @bind-Value="createdPrompt.Description" Lines="5" />
+            </MudItem>
+        </MudGrid>
+        <FileUpload />
         <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Create</MudButton>
     </MudPaper>
-
 </EditForm>
 
 

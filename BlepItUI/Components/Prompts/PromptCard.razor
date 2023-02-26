@@ -16,8 +16,15 @@
             <MudText Typo="Typo.body2">@Prompt.Description</MudText>
         </MudCardContent>
         <MudCardActions>
-            <MudIconButton Icon="@Icons.Material.Outlined.Favorite" Color="Color.Default" />
-            <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+            <MudTooltip Text="Favourite" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
+                <MudIconButton Icon="@Icons.Material.Outlined.Favorite" Color="Color.Default" />
+            </MudTooltip>
+            <MudTooltip Text="Share" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
+                <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+            </MudTooltip>
+            <MudTooltip Text="Report" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
+                <MudIconButton Icon="@Icons.Material.Filled.Report" Color="Color.Default" />
+            </MudTooltip>
             <MudSpacer />
             <MudStack>
                 <MudText Typo="Typo.subtitle2">Created: @Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")</MudText>
