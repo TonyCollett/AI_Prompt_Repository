@@ -55,9 +55,7 @@
 
             <MudMainContent Class="pt-16 px-5 pb-15">
                 <MudContainer Class="mt-4" MaxWidth="MaxWidth.ExtraExtraLarge">
-                    <CascadingValue Value="@_loggedInUser" Name="LoggedInUser">
-                        @Body
-                    </CascadingValue>
+                    @Body
                 </MudContainer>
             </MudMainContent>
         </MudLayout>
@@ -84,7 +82,6 @@
                 FirstName = "Tony",
                 LastName = "Collett",
                 EmailAddress = "tony.collett@outlook.com",
-                UserType = UserType.Admin,
                 Notifications = new List<Notification>()
             };
 

@@ -51,7 +51,7 @@ public class MongoUserData : IUserData
     public async Task IssueNotificationAsync(User user, Notification notification)
     {
         var filter = Builders<User>.Filter.Eq("Id", user.Id);
-        user.Notifications.Add(notification);
+        //user.Notifications.Add(notification);
         await _users.ReplaceOneAsync(filter, user, new ReplaceOptions { IsUpsert = true });
     }
 

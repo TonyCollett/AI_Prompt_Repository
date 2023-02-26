@@ -43,7 +43,7 @@ public class MongoNotificationData : INotificationData
             await notificationInTransaction.InsertOneAsync(notification);
 
             var usersInTransaction = db.GetCollection<User>(_db.UserCollectionName);
-            notification.ForUser.Notifications.Add(notification);
+            //notification.ForUser.Notifications.Add(notification);
             await usersInTransaction.ReplaceOneAsync(session, u => u.Id == notification.ForUser.Id, notification.ForUser);
 
             await session.CommitTransactionAsync();

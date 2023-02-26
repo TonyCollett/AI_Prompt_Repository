@@ -15,4 +15,6 @@ public class Prompt
     public User LastUpdatedBy { get; set; }
     public Status Status { get; set; }
     public IEnumerable<byte[]> Attachments { get; set; } = new List<byte[]>(5);
+    public IEnumerable<string> Tags { get; set; } = new List<string>(5);
+    public IEnumerable<SimpleUser> FavouritedBy { get; set; } = new List<SimpleUser>(5);
 }

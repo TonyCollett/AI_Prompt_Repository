@@ -60,9 +60,8 @@
             .RuleFor<string>(u => u.ObjectIdentifier, f => f.Random.Guid().ToString())
             .RuleFor<string>(u => u.FirstName, f => f.Name.FirstName())
             .RuleFor<string>(u => u.LastName, f => f.Name.LastName())
-            .RuleFor<UserType>(u => u.UserType, f => f.PickRandom<UserType>())
-            .RuleFor<List<Prompt>>(u => u.CreatedPrompts, f => new List<Prompt>())
-            .RuleFor<List<Notification>>(u => u.Notifications, f => new List<Notification>());
+            .RuleFor<IEnumerable<SimplePrompt>>(u => u.CreatedPrompts, f => new List<SimplePrompt>())
+            .RuleFor<IEnumerable<Notification>>(u => u.Notifications, f => new List<Notification>());
 
         await userData.CreateMultipleUsersAsync(fakeUsers.Generate(100));
 
@@ -125,7 +124,6 @@
                 FirstName = "Tony",
                 LastName = "Collett",
                 EmailAddress = "tony.collett@outlook.com",
-                UserType = UserType.Admin,
                 UserSettings = new UserSettings()
                 {
                     IsUserVIP = true,

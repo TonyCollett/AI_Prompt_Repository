@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using BlepItLibrary.Enums;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Net.Sockets;
 
@@ -50,10 +51,15 @@ public class MongoPromptData : IPromptData
 
         return output;
     }
+    
+    public async Task<long> GetCountOfPrompts()
+    {
+        return await _promptCollection.CountDocumentsAsync(x => x.Status == Status.Active);
+    }
 
     public async Task UpdatePromptAsync(Prompt prompt)
     {
-        await _promptCollection.ReplaceOneAsync(t => t.Id == prompt.Id, prompt);
+        await _promptCollection.ReplaceOneAsync(p => p.Id == prompt.Id, prompt);
         _cache.Remove(CacheName);
     }
 
@@ -82,6 +88,10 @@ public class MongoPromptData : IPromptData
         {
             await session.AbortTransactionAsync();
             throw;
+        }
+        finally
+        {
+            _cache.Remove(CacheName);
         }
     }
 }

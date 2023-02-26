@@ -15,9 +15,6 @@ public static class RegisterServices
         builder.Services.AddMemoryCache();
         builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 
-        //builder.Services.AddScoped<NotificationService>();
-        //builder.Services.AddHostedService<AutoCloseService>();
-
         builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
             .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
 

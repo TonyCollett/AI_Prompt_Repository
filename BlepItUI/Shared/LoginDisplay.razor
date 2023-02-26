@@ -32,12 +32,6 @@
                 <MudMenuItem>
                     User Settings
                 </MudMenuItem>
-                @if (LoggedInUser.UserType == UserType.Admin)
-                {
-                    <MudMenuItem>
-                        Admin Settings
-                    </MudMenuItem>
-                }
                 <MudMenuItem>
                     <a href="MicrosoftIdentity/Account/SignOut">
                         Logout

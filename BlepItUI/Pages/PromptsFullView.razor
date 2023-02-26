@@ -6,17 +6,46 @@
 
 @if (PromptList.Any())
 {
-    foreach (var prompt in PromptList)
-    {
-        <PromptCard Prompt="prompt" />
-    }
+    <MudStack>
+        <MudGrid>
+        @foreach (var prompt in PromptPage)
+        {
+            <MudItem xs="4">
+                <PromptCard Prompt="prompt" />
+            </MudItem>
+        }
+        </MudGrid>
+        <MudStack Row=true>
+            <MudPagination 
+                Selected="CurrentPage" 
+                Count="TotalPages" 
+                SelectedChanged="OnPageChanged" 
+                ShowFirstButton="true" 
+                ShowLastButton="true" 
+                BoundaryCount="2" 
+                MiddleCount="3"/>
+            <MudNumericField @bind-Value="CurrentPage" Min="1" Max="TotalPages" Variant="Variant.Outlined" Label="Page" />
+        </MudStack>
+    </MudStack>
 }
 
 @code {
     private List<Prompt> PromptList = new List<Prompt>();
+    private List<Prompt> PromptPage = new List<Prompt>();
+    private int CurrentPage = 1;
+    private int TotalPages = 0;
 
     protected override async Task OnInitializedAsync()
     {
         PromptList = await promptData.GetAllActivePromptsAsync();
+        PromptPage = PromptList.Skip((CurrentPage - 1) * 12).Take(12).ToList();
+        TotalPages = (int)Math.Ceiling((double)PromptList.Count / 12);
+    }
+
+    private void OnPageChanged(int newPage)
+    {
+        CurrentPage = newPage;
+        PromptPage = PromptList.Skip((CurrentPage - 1) * 12).Take(12).ToList();
+        TotalPages = (int)Math.Ceiling((double)PromptList.Count / 12);
     }
 }
