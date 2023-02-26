@@ -7,6 +7,9 @@
             <CardHeaderContent>
                 <MudText Typo="Typo.body1">@Prompt.Title</MudText>
             </CardHeaderContent>
+            <CardHeaderActions>
+                <MudRating SelectedValue="2" />
+            </CardHeaderActions>
         </MudCardHeader>
         @* <MudCardMedia Image="images/pilars.jpg" Height="250" /> *@
         <MudCardContent>
@@ -15,6 +18,10 @@
         <MudCardActions>
             <MudIconButton Icon="@Icons.Material.Outlined.Favorite" Color="Color.Default" />
             <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+            <MudSpacer />
+            <MudStack>
+                <MudText Typo="Typo.subtitle2">Created: @Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")</MudText>
+            </MudStack>
         </MudCardActions>
     </MudCard>
 }

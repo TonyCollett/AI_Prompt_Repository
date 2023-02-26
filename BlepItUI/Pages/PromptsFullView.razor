@@ -6,27 +6,35 @@
 
 @if (PromptList.Any())
 {
-    <MudStack>
-        <MudGrid>
-        @foreach (var prompt in PromptPage)
-        {
-            <MudItem xs="4">
-                <PromptCard Prompt="prompt" />
+<MudStack>
+    <MudGrid>
+    @foreach (var prompt in PromptPage)
+    {
+        <MudItem xs="4">
+            <PromptCard Prompt="prompt" />
+        </MudItem>
+    }
+    </MudGrid>
+    <MudPaper>
+        <MudGrid Class="d-flex align-center mud-width-full py-3">
+            <MudItem xs="1"></MudItem>
+                <MudItem xs="10">
+                <MudPagination 
+                    Selected="CurrentPage" 
+                    Count="TotalPages" 
+                    SelectedChanged="OnPageChanged" 
+                    ShowFirstButton="true" 
+                    ShowLastButton="true" 
+                    BoundaryCount="2" 
+                    MiddleCount="3"  
+                    Class="justify-center mud-width-full" />
             </MudItem>
-        }
+            <MudItem xs="1">
+                <MudNumericField Margin="Margin.Dense" @bind-Value="CurrentPage" Min="1" Max="TotalPages" Variant="Variant.Outlined" Label="Page" />
+            </MudItem>
         </MudGrid>
-        <MudStack Row=true>
-            <MudPagination 
-                Selected="CurrentPage" 
-                Count="TotalPages" 
-                SelectedChanged="OnPageChanged" 
-                ShowFirstButton="true" 
-                ShowLastButton="true" 
-                BoundaryCount="2" 
-                MiddleCount="3"/>
-            <MudNumericField @bind-Value="CurrentPage" Min="1" Max="TotalPages" Variant="Variant.Outlined" Label="Page" />
-        </MudStack>
-    </MudStack>
+    </MudPaper>
+</MudStack>
 }
 
 @code {
