@@ -8,15 +8,8 @@
 @inject IDbConnection dbConnection
 @inject ISnackbar Snackbar
 
-<MudOverlay @bind-Visible="showLoadingArt" DarkBackground="true" ZIndex="9999" AutoClose="true">
-     <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
-</MudOverlay>
-
 <EditForm Model="createdPrompt" OnValidSubmit="CreatePrompt">
     <MudPaper Class="pa-16 ma-2" Elevation="3" Square="true">
-        <MudTabs Outlined="true" Position="Position.Left" Rounded="true" Border="true" ApplyEffectsToContainer="true"
-            Class="mt-8" PanelClass="pa-6" @ref="tabs" @bind-ActivePanelIndex="activeTab">
-            <MudTabPanel Text="General">
                 <MudGrid>
                     <MudItem lg="12" sm="12">
                         <MudTextField Variant="Variant.Outlined" T="string" Label="Title" @bind-Value="createdPrompt.Title" Required="true" RequiredError="Title is required!" />
@@ -25,11 +18,7 @@
                         <MudTextField Variant="Variant.Outlined" T="string" Label="Description" @bind-Value="createdPrompt.Description" Lines="5" />
                     </MudItem>
                 </MudGrid>
-            </MudTabPanel>
-            <MudTabPanel Text="Attachments">
                 <FileUpload />
-            </MudTabPanel>
-        </MudTabs>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Class="ml-auto">Create</MudButton>
     </MudPaper>
 
@@ -37,30 +26,19 @@
 
 
 @code {
-    private int activeTab = 0;
-    MudTabs tabs;
-    private bool showLoadingArt = false;
-
-    public class CreatePromptModel
+    private class CreatePromptModel
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public Status Status { get; set; } = Status.Active;
         public IEnumerable<byte[]> Attachments { get; set; }
     }
 
     CreatePromptModel createdPrompt = new();
     private User loggedInUser;
-    private List<User> userList;
 
     protected async override Task OnInitializedAsync()
     {
-        showLoadingArt = true;
-
         loggedInUser = await authProvider.GetUserFromAuth(userData);
-
-        userList = await userData.GetAllUsersAsync();
-        showLoadingArt = false;
     }
 
     protected async Task CreatePrompt()
@@ -71,22 +49,12 @@
                 Description = createdPrompt.Description,
                 CreatedBy = loggedInUser,
                 LastUpdatedBy = loggedInUser,
-                Status = createdPrompt.Status,
+                Status = Status.Active,
                 Attachments = createdPrompt.Attachments
             };
 
         await promptData.CreatePromptAsync(prompt);
         Snackbar.Add("Save Successful");
         navManager.NavigateTo($"/");
-    }
-
-    private async Task<IEnumerable<User>> UserLookup(string value)
-    {
-        await Task.Delay(10);
-        // if text is null or empty, show complete list
-        if (string.IsNullOrEmpty(value)){
-            return userList.ToList();
-        }
-        return userList.Where(x => x.DisplayName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }
