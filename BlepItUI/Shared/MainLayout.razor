@@ -39,6 +39,9 @@
                     </MudButton>
                 </MudDrawerHeader>
             }
+            <MudNavLink @onclick="@(() => NavigateTo("Prompts/New"))" Icon="@Icons.Material.Filled.NewReleases">
+                Newest Prompts
+            </MudNavLink>
             <MudNavLink @onclick="@(() => NavigateTo("Prompts/Trending"))" Icon="@Icons.Material.Filled.TrendingUp">
                 Trending Prompts
             </MudNavLink>

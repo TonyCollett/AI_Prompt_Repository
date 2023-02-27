@@ -8,7 +8,7 @@
                 <MudText Typo="Typo.body1">@Prompt.Title</MudText>
             </CardHeaderContent>
             <CardHeaderActions>
-                <MudRating SelectedValue="2" />
+                <MudRating ReadOnly="true" @bind-SelectedValue="selectedVal" />
             </CardHeaderActions>
         </MudCardHeader>
         @* <MudCardMedia Image="images/pilars.jpg" Height="250" /> *@
@@ -36,4 +36,6 @@
 @code {
     [Parameter] 
     public Prompt Prompt { get; set; }
+
+    private int selectedVal = 3;
 }
