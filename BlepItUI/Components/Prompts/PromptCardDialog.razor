@@ -1,6 +1,6 @@
-@inject IDialogService DialogService
-
-@if(Prompt != null){
+<MudDialog>
+    <DialogContent>
+        @if(Prompt != null){
     <MudCard Outlined="true">
         <MudCardHeader>
             <CardHeaderAvatar>
@@ -10,7 +10,7 @@
                 <MudText Typo="Typo.body1">@Prompt.Title</MudText>
             </CardHeaderContent>
             <CardHeaderActions>
-                <MudIconButton @onclick="OpenDialog" Icon="@Icons.Material.Filled.OpenInNew" Variant="Variant.Outlined" Color="Color.Primary" />
+                <MudIconButton Icon="@Icons.Material.Filled.OpenInNew" Variant="Variant.Outlined" Color="Color.Primary" />
             </CardHeaderActions>
         </MudCardHeader>
         @* <MudCardMedia Image="images/pilars.jpg" Height="250" /> *@
@@ -39,16 +39,17 @@
         </MudCardActions>
     </MudCard>
 }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
-    [Parameter] 
-    public Prompt Prompt { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public Prompt Prompt { get; set; }
 
-    private void OpenDialog()
-    {
-        var parameters = new DialogParameters { ["prompt"]=Prompt };
-		var options = new DialogOptions { CloseOnEscapeKey = true };
-        DialogService.Show<PromptCardDialog>("Simple Dialog", parameters, options);
-    }
-
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
 }
