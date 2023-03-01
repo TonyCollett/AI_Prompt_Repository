@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using MudBlazor;
 using MudBlazor.Services;
 
 namespace BlepItUI;
@@ -11,7 +12,10 @@ public static class RegisterServices
     {
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor().AddMicrosoftIdentityConsentHandler();
-        builder.Services.AddMudServices();
+        builder.Services.AddMudServices(config =>
+        {
+            config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        });
         builder.Services.AddMemoryCache();
         builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 

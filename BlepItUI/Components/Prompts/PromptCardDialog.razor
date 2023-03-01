@@ -1,6 +1,8 @@
+@inject NavigationManager navManager
+
 <MudDialog>
     <DialogContent>
-        @if(Prompt != null){
+    @if(Prompt != null){
     <MudCard Outlined="true">
         <MudCardHeader>
             <CardHeaderAvatar>
@@ -10,7 +12,7 @@
                 <MudText Typo="Typo.body1">@Prompt.Title</MudText>
             </CardHeaderContent>
             <CardHeaderActions>
-                <MudIconButton Icon="@Icons.Material.Filled.OpenInNew" Variant="Variant.Outlined" Color="Color.Primary" />
+                <MudIconButton OnClick="GoToPrompt" Icon="@Icons.Material.Filled.OpenInNew" Variant="Variant.Outlined" Color="Color.Primary" />
             </CardHeaderActions>
         </MudCardHeader>
         @* <MudCardMedia Image="images/pilars.jpg" Height="250" /> *@
@@ -38,7 +40,7 @@
             </MudStack>
         </MudCardActions>
     </MudCard>
-}
+    }
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -52,4 +54,9 @@
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
+
+    void GoToPrompt()
+    {
+        navManager.NavigateTo($"/Prompt/{Prompt.Id}");
+    }
 }

@@ -11,6 +11,7 @@ public class User
     public string EmailAddress { get; set; }
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     public DateTime LastLoggedInDate { get; set; }
+    public VIPStatus VIPStatus { get; set; } = VIPStatus.None;
     public UserSettings UserSettings { get; set; }
     public byte[] ProfilePicture { get; set; }
     public IEnumerable<Notification> Notifications { get; set; }
@@ -26,4 +27,12 @@ public class User
     public override int GetHashCode() => DisplayName?.GetHashCode() ?? 0;
 
     public override string ToString() => DisplayName;
+
+
+}
+
+public enum VIPStatus
+{
+    None,
+    Paid
 }
