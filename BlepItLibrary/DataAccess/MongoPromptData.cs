@@ -32,6 +32,20 @@ public class MongoPromptData : IPromptData
         return output;
     }
 
+    public async Task<List<Prompt>> GetPromptsForPageAsync(int page)
+    {
+        int pageSize = 12;
+        int skip = (page - 1) * pageSize;
+
+        var results = await _promptCollection.FindAsync(t => t.Status == Status.Active,
+            new FindOptions<Prompt>
+            {
+                Skip = skip,
+                Limit = pageSize
+            });
+        return results.ToList();
+    }
+
     public async Task<Prompt> GetPromptAsync(string id)
     {
         IAsyncCursor<Prompt> results = await _promptCollection.FindAsync(t => t.Id == id);

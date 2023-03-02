@@ -34,6 +34,7 @@ public static class RegisterServices
         builder.Services.AddTransient<IUserData, MongoUserData>();
         builder.Services.AddTransient<IPromptData, MongoPromptData>();
         builder.Services.AddTransient<ICommentData, MongoCommentData>();
+        builder.Services.AddTransient<IFavouriteData, MongoFavouriteData>();
         builder.Services.AddTransient<INotificationData, MongoNotificationData>();
     }
 }

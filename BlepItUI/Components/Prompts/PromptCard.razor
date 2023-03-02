@@ -1,6 +1,7 @@
 @inject IDialogService DialogService
 @inject IPromptData promptData
 @inject IUserData userData
+@inject IFavouriteData favouriteData
 @inject AuthenticationStateProvider authProvider
 
 @if(Prompt != null){
@@ -26,7 +27,9 @@
             @if (_readOnly == false)
             {
             <MudTooltip Text="Favourite" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
-                <MudIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Default" Disabled="@_readOnly" />
+                <MudToggleIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Default"
+                                 ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="Color.Default" 
+                                 Toggled="@_favourited" ToggledChanged="ToggleFavourite"/>
             </MudTooltip>
             }
             <MudTooltip Text="Share" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
@@ -55,12 +58,13 @@
 @code {
     [Parameter] 
     public Prompt Prompt { get; set; }
-    
+
     [CascadingParameter] 
     public User LoggedInUser { get; set; }
 
     private string _createdTooltip;
     private bool _readOnly;
+    private bool _favourited = false;
 
     protected async override Task OnInitializedAsync()
     {
@@ -68,11 +72,19 @@
         var userIsAuthenticated = authState.User.Identity.IsAuthenticated;
 
         _readOnly = !userIsAuthenticated;
+    }
 
-        _createdTooltip = $"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}";
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _createdTooltip = $"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}";
 
-        Console.WriteLine(_readOnly);
-        Console.WriteLine(LoggedInUser?.DisplayName);
+            _favourited = await favouriteData.IsPromptFavouriteByPromptIdAndUserIdAsync(Prompt.Id, LoggedInUser.Id);
+
+            Console.WriteLine(Prompt.Title + " " + _favourited);
+            StateHasChanged();
+        }
     }
 
     private void OpenDialog()
@@ -81,10 +93,10 @@
         var options = new DialogOptions { CloseOnEscapeKey = true };
         DialogService.Show<PromptCardDialog>("Simple Dialog", parameters, options);
     }
-    
+
     private void ToggleFavourite()
     {
-        //promptData.ToggleFavouritePromptAsync(Prompt);
-        //userData.ToggleFavouritePromptAsync(LoggedInUser);
+        favouriteData.ToggleFavouriteAsync(Prompt.Id, LoggedInUser.Id);
+        _favourited = !_favourited;
     }
 }

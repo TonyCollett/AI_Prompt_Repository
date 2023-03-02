@@ -27,6 +27,32 @@ public class MongoFavouriteData : IFavouriteData
         return output;
     }
 
+    public async Task<bool> ToggleFavouriteAsync(string promptId, string userId)
+    {
+        var favourite = await _favourites.Find(x => x.PromptId == promptId && x.UserId == userId).FirstOrDefaultAsync();
+        if (favourite is null)
+        {
+            favourite = new Favourite
+            {
+                PromptId = promptId,
+                UserId = userId
+            };
+            await _favourites.InsertOneAsync(favourite);
+            return true;
+        }
+        else
+        {
+            await _favourites.DeleteOneAsync(x => x.Id == favourite.Id);
+            return false;
+        }
+    }
+
+    public async Task<bool> IsPromptFavouriteByPromptIdAndUserIdAsync(string promptId, string userId)
+    {
+        var favourite = await _favourites.Find(x => x.PromptId == promptId && x.UserId == userId).FirstOrDefaultAsync();
+        return favourite is not null;
+    }
+
     public async Task<List<Favourite>> GetFavouritesByPromptIdAsync(string promptId)
     {
         var results = await _favourites.FindAsync(x => x.PromptId == promptId);

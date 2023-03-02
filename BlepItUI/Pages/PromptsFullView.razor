@@ -4,17 +4,18 @@
 @inject AuthenticationStateProvider authProvider
 @inject IUserData userData
 
-@if (_promptList.Any())
-{
 <MudStack>
     <MudGrid>
-    @foreach (var prompt in _promptPage)
+    @if (_promptPage.Any())
     {
+        foreach (var prompt in _promptPage)
+        {
         <MudItem lg="4" md="6" xs="12">
             <CascadingValue Value="@loggedInUser">
                 <PromptCard Prompt="prompt" />
             </CascadingValue>
         </MudItem>
+        }
     }
     </MudGrid>
     <MudPaper>
@@ -37,27 +38,39 @@
         </MudGrid>
     </MudPaper>
 </MudStack>
-}
 
 @code {
-    private List<Prompt> _promptList = new List<Prompt>();
     private List<Prompt> _promptPage = new List<Prompt>();
     private int _currentPage = 1;
-    private int _totalPages = 0;
+    private int _totalPages = 3;
     public User? loggedInUser = null;
 
     protected override async Task OnInitializedAsync()
     {
         loggedInUser = await authProvider.GetUserFromAuthAsync(userData);
-        _promptList = await promptData.GetAllActivePromptsAsync();
-        _promptPage = _promptList.Skip((_currentPage - 1) * 12).Take(12).ToList();
-        _totalPages = (int)Math.Ceiling((double)_promptList.Count / 12);
+
+        _promptPage = await promptData.GetPromptsForPageAsync(_currentPage);
     }
 
-    private void OnPageChanged(int newPage)
+    private async Task OnPageChanged(int newPage)
     {
         _currentPage = newPage;
-        _promptPage = _promptList.Skip((_currentPage - 1) * 12).Take(12).ToList();
-        _totalPages = (int)Math.Ceiling((double)_promptList.Count / 12);
+        _promptPage = await promptData.GetPromptsForPageAsync(_currentPage);
+        StateHasChanged();
     }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    loggedInUser = await authProvider.GetUserFromAuthAsync(userData);
+    //    _promptList = await promptData.GetAllActivePromptsAsync();
+    //    _promptPage = _promptList.Skip((_currentPage - 1) * 12).Take(12).ToList();
+    //    _totalPages = (int)Math.Ceiling((double)_promptList.Count / 12);
+    //}
+
+    //private void OnPageChanged(int newPage)
+    //{
+    //    _currentPage = newPage;
+    //    _promptPage = _promptList.Skip((_currentPage - 1) * 12).Take(12).ToList();
+    //    _totalPages = (int)Math.Ceiling((double)_promptList.Count / 12);
+    //}
 }

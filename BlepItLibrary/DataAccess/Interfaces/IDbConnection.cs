@@ -6,6 +6,8 @@ public interface IDbConnection
     string DbName { get; }
     IMongoCollection<Comment> CommentCollection { get; }
     string CommentCollectionName { get; }
+    IMongoCollection<Favourite> FavouriteCollection { get; }
+    string FavouriteCollectionName { get; }
     IMongoCollection<Notification> NotificationCollection { get; }
     string NotificationCollectionName { get; }
     IMongoCollection<Prompt> PromptCollection { get; }
