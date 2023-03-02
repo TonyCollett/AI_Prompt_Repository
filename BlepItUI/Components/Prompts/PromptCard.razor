@@ -8,7 +8,7 @@
     <MudCard Outlined="true">
         <MudCardHeader>
             <CardHeaderAvatar>
-                <MudTooltip Text="@($"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}")" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
+                <MudTooltip Text="@($"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}")" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
                     <MudAvatar Color="Color.Secondary">GPT</MudAvatar>
                 </MudTooltip>
             </CardHeaderAvatar>
@@ -26,22 +26,24 @@
         <MudCardActions>
             @if (_readOnly == false)
             {
-            <MudTooltip Text="Favourite" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
-                <MudToggleIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Default"
-                                 ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="Color.Default" 
-                                 Toggled="@Prompt.FavouritedBy.Contains(LoggedInUser.Id)" ToggledChanged="ToggleFavourite" />
-            </MudTooltip>
+                <MudTooltip Text="Favourite" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                    <MudBadge Content="@Prompt.FavouritedBy.Count().ToString()" Overlap="true" Origin="Origin.TopLeft" Color="Color.Secondary">
+                        <MudToggleIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary"
+                                     ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="Color.Secondary"
+                                         Toggled="@Prompt.FavouritedBy.Contains(LoggedInUser.Id)" ToggledChanged="ToggleFavourite" />
+                    </MudBadge>
+                </MudTooltip>
             }
-            <MudTooltip Text="Share" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
-                <MudMenu Icon="@Icons.Material.Filled.Share" Color="Color.Secondary">
+            <MudTooltip Text="Share" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                <MudMenu Icon="@Icons.Material.Filled.Share" Color="Color.Tertiary">
                     <MudMenuItem Icon="@Icons.Custom.Brands.Facebook" IconColor="Color.Primary">Facebook</MudMenuItem>
                     <MudMenuItem Icon="@Icons.Custom.Brands.Twitter" IconColor="Color.Primary">Twitter</MudMenuItem>
                     <MudMenuItem Icon="@Icons.Custom.Brands.Instagram" IconColor="Color.Primary">Instagram</MudMenuItem>
                     <MudMenuItem Icon="@Icons.Custom.Brands.Discord" IconColor="Color.Primary">Discord</MudMenuItem>
                 </MudMenu>
             </MudTooltip>
-            <MudTooltip Text="Report" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
-                <MudIconButton Icon="@Icons.Material.Filled.Report" Color="Color.Default" />
+            <MudTooltip Text="Report" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
+                <MudIconButton Icon="@Icons.Material.Filled.Report" Color="Color.Error" />
             </MudTooltip>
             <MudSpacer />
             @if (_readOnly == false) {
