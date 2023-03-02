@@ -1,5 +1,6 @@
 @inject IDialogService DialogService
 @inject IPromptData promptData
+@inject IUserData userData
 @inject AuthenticationStateProvider authProvider
 
 @if(Prompt != null){
@@ -54,6 +55,9 @@
 @code {
     [Parameter] 
     public Prompt Prompt { get; set; }
+    
+    [CascadingParameter] 
+    public User LoggedInUser { get; set; }
 
     private string _createdTooltip;
     private bool _readOnly;
@@ -68,6 +72,7 @@
         _createdTooltip = $"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}";
 
         Console.WriteLine(_readOnly);
+        Console.WriteLine(LoggedInUser?.DisplayName);
     }
 
     private void OpenDialog()
@@ -76,9 +81,10 @@
         var options = new DialogOptions { CloseOnEscapeKey = true };
         DialogService.Show<PromptCardDialog>("Simple Dialog", parameters, options);
     }
-
+    
     private void ToggleFavourite()
     {
-        promptData.FavouritePromptAsync();
+        //promptData.ToggleFavouritePromptAsync(Prompt);
+        //userData.ToggleFavouritePromptAsync(LoggedInUser);
     }
 }

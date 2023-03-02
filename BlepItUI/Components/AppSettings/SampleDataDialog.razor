@@ -2,8 +2,6 @@
 @inject IUserData userData
 @inject IPromptData promptData
 @inject IDbConnection dbConnection
-@using CountryData
-@using CountryData.Bogus
 @namespace BlepItUI.Components.AppSettings
 
 <MudOverlay @bind-Visible="showLoadingArt" DarkBackground="true" ZIndex="9999" AutoClose="true">
@@ -60,7 +58,7 @@
             .RuleFor<string>(u => u.ObjectIdentifier, f => f.Random.Guid().ToString())
             .RuleFor<string>(u => u.FirstName, f => f.Name.FirstName())
             .RuleFor<string>(u => u.LastName, f => f.Name.LastName())
-            .RuleFor<IEnumerable<SimplePrompt>>(u => u.CreatedPrompts, f => new List<SimplePrompt>())
+            .RuleFor<IEnumerable<string>>(u => u.CreatedPrompts, f => new List<string>())
             .RuleFor<IEnumerable<Notification>>(u => u.Notifications, f => new List<Notification>());
 
         await userData.CreateMultipleUsersAsync(fakeUsers.Generate(100));

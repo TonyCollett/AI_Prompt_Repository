@@ -29,7 +29,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        loggedInUser = await authProvider.GetUserFromAuth(userData);
+        loggedInUser = await authProvider.GetUserFromAuthAsync(userData);
         comments = await commentData.GetCommentsByParentIdAsync(ParentId);
 
     }

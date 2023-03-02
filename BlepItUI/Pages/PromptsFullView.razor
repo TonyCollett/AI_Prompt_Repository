@@ -4,14 +4,16 @@
 @inject AuthenticationStateProvider authProvider
 @inject IUserData userData
 
-@if (PromptList.Any())
+@if (_promptList.Any())
 {
 <MudStack>
     <MudGrid>
-    @foreach (var prompt in PromptPage)
+    @foreach (var prompt in _promptPage)
     {
         <MudItem lg="4" md="6" xs="12">
-            <PromptCard Prompt="prompt" />
+            <CascadingValue Value="@loggedInUser">
+                <PromptCard Prompt="prompt" />
+            </CascadingValue>
         </MudItem>
     }
     </MudGrid>
@@ -20,8 +22,8 @@
             <MudItem lg="1" xs="2"></MudItem>
                 <MudItem lg="10" xs="8">
                 <MudPagination 
-                    Selected="CurrentPage" 
-                    Count="TotalPages" 
+                    Selected="_currentPage" 
+                    Count="_totalPages" 
                     SelectedChanged="OnPageChanged" 
                     ShowFirstButton="true" 
                     ShowLastButton="true" 
@@ -30,7 +32,7 @@
                     Class="justify-center mud-width-full" />
             </MudItem>
             <MudItem lg="1" xs="2">
-                <MudNumericField Margin="Margin.Dense" @bind-Value="CurrentPage" Min="1" Max="TotalPages" Variant="Variant.Outlined" Label="Page" />
+                <MudNumericField Margin="Margin.Dense" @bind-Value="_currentPage" Min="1" Max="_totalPages" Variant="Variant.Outlined" Label="Page" />
             </MudItem>
         </MudGrid>
     </MudPaper>
@@ -38,22 +40,24 @@
 }
 
 @code {
-    private List<Prompt> PromptList = new List<Prompt>();
-    private List<Prompt> PromptPage = new List<Prompt>();
-    private int CurrentPage = 1;
-    private int TotalPages = 0;
+    private List<Prompt> _promptList = new List<Prompt>();
+    private List<Prompt> _promptPage = new List<Prompt>();
+    private int _currentPage = 1;
+    private int _totalPages = 0;
+    public User? loggedInUser = null;
 
     protected override async Task OnInitializedAsync()
     {
-        PromptList = await promptData.GetAllActivePromptsAsync();
-        PromptPage = PromptList.Skip((CurrentPage - 1) * 12).Take(12).ToList();
-        TotalPages = (int)Math.Ceiling((double)PromptList.Count / 12);
+        loggedInUser = await authProvider.GetUserFromAuthAsync(userData);
+        _promptList = await promptData.GetAllActivePromptsAsync();
+        _promptPage = _promptList.Skip((_currentPage - 1) * 12).Take(12).ToList();
+        _totalPages = (int)Math.Ceiling((double)_promptList.Count / 12);
     }
 
     private void OnPageChanged(int newPage)
     {
-        CurrentPage = newPage;
-        PromptPage = PromptList.Skip((CurrentPage - 1) * 12).Take(12).ToList();
-        TotalPages = (int)Math.Ceiling((double)PromptList.Count / 12);
+        _currentPage = newPage;
+        _promptPage = _promptList.Skip((_currentPage - 1) * 12).Take(12).ToList();
+        _totalPages = (int)Math.Ceiling((double)_promptList.Count / 12);
     }
 }

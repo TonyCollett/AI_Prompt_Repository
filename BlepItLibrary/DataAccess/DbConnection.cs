@@ -7,16 +7,18 @@ public class DbConnection : IDbConnection
     private readonly IConfiguration _config;
     private readonly IMongoDatabase _db;
     private readonly string _connectionId = "MongoDB";
-    public string DbName { get; private set; }
-    public string CommentCollectionName { get; private set; } = "comments";
-    public string NotificationCollectionName { get; private set; } = "notifications";
-    public string UserCollectionName { get; private set; } = "users";
-    public string PromptCollectionName { get; private set; } = "prompts";
-    public MongoClient Client { get; private set; }
-    public IMongoCollection<Comment> CommentCollection { get; private set; }
-    public IMongoCollection<Notification> NotificationCollection { get; private set; }
-    public IMongoCollection<User> UserCollection { get; private set; }
-    public IMongoCollection<Prompt> PromptCollection { get; private set; }
+    public string DbName { get; }
+    public string CommentCollectionName { get; } = "comments";
+    public string FavouriteCollectionName { get; } = "favourites";
+    public string NotificationCollectionName { get; } = "notifications";
+    public string UserCollectionName { get; } = "users";
+    public string PromptCollectionName { get; } = "prompts";
+    public MongoClient Client { get; }
+    public IMongoCollection<Comment> CommentCollection { get; }
+    public IMongoCollection<Favourite> FavouriteCollection { get; }
+    public IMongoCollection<Notification> NotificationCollection { get; }
+    public IMongoCollection<User> UserCollection { get; }
+    public IMongoCollection<Prompt> PromptCollection { get; }
 
     public DbConnection(IConfiguration config)
     {
@@ -27,6 +29,7 @@ public class DbConnection : IDbConnection
             DbName = _config["DatabaseName"] ?? "BlepIt";
             _db = Client.GetDatabase(DbName);
 
+            FavouriteCollection = _db.GetCollection<Favourite>(FavouriteCollectionName);
             CommentCollection = _db.GetCollection<Comment>(CommentCollectionName);
             NotificationCollection = _db.GetCollection<Notification>(NotificationCollectionName);
             UserCollection = _db.GetCollection<User>(UserCollectionName);
@@ -42,6 +45,7 @@ public class DbConnection : IDbConnection
 
     public async Task DropAllDataCollectionsAsync()
     {
+        await _db.DropCollectionAsync(FavouriteCollectionName);
         await _db.DropCollectionAsync(CommentCollectionName);
         await _db.DropCollectionAsync(NotificationCollectionName);
         await _db.DropCollectionAsync(UserCollectionName);

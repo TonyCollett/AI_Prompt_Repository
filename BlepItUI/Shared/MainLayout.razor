@@ -45,9 +45,6 @@
             <MudNavLink @onclick="@(() => NavigateTo("Prompts/Trending"))" Icon="@Icons.Material.Filled.TrendingUp">
                 Trending Prompts
             </MudNavLink>
-            <MudNavLink @onclick="@(() => NavigateTo("Prompts/Top"))" Icon="@Icons.Material.Filled.ArrowUpward">
-                Top Prompts
-            </MudNavLink>
             <MudNavLink @onclick="@(() => NavigateTo("Prompts/TopFavourites"))" Icon="@Icons.Material.Filled.Star">
                 Most Favourited Prompts
             </MudNavLink>
@@ -76,7 +73,7 @@
     </MudMainContent>
 
     <MudScrollToTop>
-        <MudFab Color="Color.Tertiary" Icon="@Icons.Material.Filled.ArrowCircleUp" />
+        <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.ArrowCircleUp" />
     </MudScrollToTop>
 </MudLayout>
 
@@ -103,23 +100,18 @@
             await userData.CreateUserAsync(tonyAdmin);
         }
 
-        _loggedInUser = await authProvider.GetUserFromAuth(userData);
+        _loggedInUser = await authProvider.GetUserFromAuthAsync(userData);
     }
 
     private MudTheme _theme = new();
     private bool _isDarkMode = true;
 
-    void ToggleDrawer()
-    {
-        open = !open;
-    }
-
-    void GoHome()
+    private void GoHome()
     {
         navManager.NavigateTo("/");
     }
 
-    void NavigateTo(string url)
+    private void NavigateTo(string url)
     {
         navManager.NavigateTo($"/{url}");
     }

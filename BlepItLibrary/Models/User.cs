@@ -5,6 +5,7 @@ public class User
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
     public string ObjectIdentifier { get; set; }
+    public string Username { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string DisplayName => FirstName + " " + LastName;
@@ -15,8 +16,8 @@ public class User
     public UserSettings UserSettings { get; set; }
     public byte[] ProfilePicture { get; set; }
     public IEnumerable<Notification> Notifications { get; set; }
-    public IEnumerable<SimplePrompt> CreatedPrompts { get; set; }
-    public IEnumerable<SimplePrompt> FavouritePrompts { get; set; }
+    public IEnumerable<string> CreatedPrompts { get; set; }
+    public IEnumerable<string> FavouritePrompts { get; set; }
 
     public override bool Equals(object? o)
     {
