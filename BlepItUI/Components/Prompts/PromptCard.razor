@@ -1,10 +1,13 @@
 @inject IDialogService DialogService
+@inject AuthenticationStateProvider authProvider
 
 @if(Prompt != null){
     <MudCard Outlined="true">
         <MudCardHeader>
             <CardHeaderAvatar>
-                <MudAvatar Color="Color.Secondary">GPT</MudAvatar>
+                <MudTooltip Text="@_createdTooltip" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
+                    <MudAvatar Color="Color.Secondary">GPT</MudAvatar>
+                </MudTooltip>
             </CardHeaderAvatar>
             <CardHeaderContent>
                 <MudText Typo="Typo.body1">@Prompt.Title</MudText>
@@ -18,9 +21,12 @@
             <MudText Typo="Typo.body2">@Prompt.Description</MudText>
         </MudCardContent>
         <MudCardActions>
+            @if (_readOnly == false)
+            {
             <MudTooltip Text="Favourite" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
-                <MudIconButton Icon="@Icons.Material.Outlined.Favorite" Color="Color.Default" />
+                <MudIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Default" Disabled="@_readOnly" />
             </MudTooltip>
+            }
             <MudTooltip Text="Share" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
                 <MudMenu Icon="@Icons.Material.Filled.Share" Color="Color.Secondary">
                     <MudMenuItem Icon="@Icons.Custom.Brands.Facebook" IconColor="Color.Primary">Facebook</MudMenuItem>
@@ -33,22 +39,45 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Report" Color="Color.Default" />
             </MudTooltip>
             <MudSpacer />
-            <MudStack>
-                <MudText Typo="Typo.subtitle2">Created: @Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")</MudText>
-            </MudStack>
+            @if (_readOnly == false) {
+            <MudButton StartIcon="@Icons.Material.Filled.Try" Variant="Variant.Outlined" Color="Color.Default" >
+                Try It
+            </MudButton>
+            }
         </MudCardActions>
     </MudCard>
+
+    
 }
 
 @code {
     [Parameter] 
     public Prompt Prompt { get; set; }
 
+    private string _createdTooltip;
+    private bool _readOnly;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await authProvider.GetAuthenticationStateAsync();
+        var userIsAuthenticated = authState.User.Identity.IsAuthenticated;
+
+        _readOnly = !userIsAuthenticated;
+
+        _createdTooltip = $"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}";
+
+        Console.WriteLine(_readOnly);
+    }
+
     private void OpenDialog()
     {
         var parameters = new DialogParameters { ["prompt"]=Prompt };
-		var options = new DialogOptions { CloseOnEscapeKey = true };
+        var options = new DialogOptions { CloseOnEscapeKey = true };
         DialogService.Show<PromptCardDialog>("Simple Dialog", parameters, options);
     }
 
+    private void ToggleFavourite()
+    {
+        
+    }
 }
