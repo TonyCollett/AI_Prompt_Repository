@@ -8,7 +8,7 @@
     <MudCard Outlined="true">
         <MudCardHeader>
             <CardHeaderAvatar>
-                <MudTooltip Text="@_createdTooltip" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
+                <MudTooltip Text="@($"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}")" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
                     <MudAvatar Color="Color.Secondary">GPT</MudAvatar>
                 </MudTooltip>
             </CardHeaderAvatar>
@@ -29,7 +29,7 @@
             <MudTooltip Text="Favourite" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
                 <MudToggleIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Default"
                                  ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="Color.Default" 
-                                 Toggled="@_favourited" ToggledChanged="ToggleFavourite"/>
+                                 Toggled="@Prompt.FavouritedBy.Contains(LoggedInUser.Id)" ToggledChanged="ToggleFavourite" />
             </MudTooltip>
             }
             <MudTooltip Text="Share" Arrow="true" Placement="Placement.Bottom" Color="Color.Tertiary">
@@ -75,19 +75,6 @@
         _readOnly = !userIsAuthenticated;
     }
 
-    protected override void OnParametersSet()
-    {
-        _createdTooltip = $"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}";
-
-        if (userIsAuthenticated)
-        {
-            _favourited = Prompt.FavouritedBy.Where(x => x.Id == LoggedInUser.Id).Any();
-        }
-
-        Console.WriteLine(Prompt.Title + " " + _favourited);
-        StateHasChanged();
-    }
-
     private void OpenDialog()
     {
         var parameters = new DialogParameters { ["prompt"]=Prompt };
@@ -98,7 +85,7 @@
     private void ToggleFavourite()
     {
         favouriteData.ToggleFavouriteAsync(Prompt.Id, LoggedInUser.Id);
-        promptData.ToggleFavouriteOnPromptAsync(Prompt, LoggedInUser);
+        promptData.ToggleFavouriteOnPromptAsync(Prompt, LoggedInUser.Id);
         _favourited = !_favourited;
     }
 }

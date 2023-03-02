@@ -4,7 +4,7 @@ namespace BlepItLibrary.DataAccess.Interfaces;
 public interface IPromptData
 {
     Task<List<Prompt>> GetAllActivePromptsAsync();
-    Task ToggleFavouriteOnPromptAsync(Prompt prompt, User user);
+    Task ToggleFavouriteOnPromptAsync(Prompt prompt, string userId);
     Task<List<Prompt>> GetPromptsForPageAsync(int page);
     Task<Prompt> GetPromptAsync(string id);
     Task<List<Prompt>> GetUserCreatedPromptsAsync(User user);

@@ -1,6 +1,7 @@
 ﻿using BlepItLibrary.Enums;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using System.Net.Sockets;
 
 namespace BlepItLibrary.DataAccess;
@@ -32,20 +33,20 @@ public class MongoPromptData : IPromptData
         return output;
     }
 
-    public async Task ToggleFavouriteOnPromptAsync(Prompt prompt, User user)
+    public async Task ToggleFavouriteOnPromptAsync(Prompt prompt, string userId)
     {
         if (prompt is null)
         {
             throw new SocketException();
         }
 
-        if (prompt.FavouritedBy.Contains(user))
+        if (prompt.FavouritedBy.Contains(userId))
         {
-            prompt.FavouritedBy.Remove(user);
+            prompt.FavouritedBy.Remove(userId);
         }
         else
         {
-            prompt.FavouritedBy.Add(user);
+            prompt.FavouritedBy.Add(userId);
         }
 
         await UpdatePromptAsync(prompt);

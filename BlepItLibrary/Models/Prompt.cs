@@ -16,5 +16,5 @@ public class Prompt
     public Status Status { get; set; }
     public List<byte[]> Attachments { get; set; } = new List<byte[]>(5);
     public List<string> Tags { get; set; } = new List<string>();
-    public List<User> FavouritedBy { get; set; } = new List<User>();
+    public List<string> FavouritedBy { get; set; } = new List<string>();
 }
