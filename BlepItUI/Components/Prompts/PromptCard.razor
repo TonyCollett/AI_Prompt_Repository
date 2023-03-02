@@ -65,26 +65,27 @@
     private string _createdTooltip;
     private bool _readOnly;
     private bool _favourited = false;
+    private bool userIsAuthenticated;
 
     protected async override Task OnInitializedAsync()
     {
         var authState = await authProvider.GetAuthenticationStateAsync();
-        var userIsAuthenticated = authState.User.Identity.IsAuthenticated;
+        userIsAuthenticated = authState.User.Identity.IsAuthenticated;
 
         _readOnly = !userIsAuthenticated;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnParametersSet()
     {
-        if (firstRender)
+        _createdTooltip = $"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}";
+
+        if (userIsAuthenticated)
         {
-            _createdTooltip = $"Created: {Prompt.DateCreated.ToLocalTime().ToString("dd/MM/yyyy h:mm tt")}";
-
-            _favourited = await favouriteData.IsPromptFavouriteByPromptIdAndUserIdAsync(Prompt.Id, LoggedInUser.Id);
-
-            Console.WriteLine(Prompt.Title + " " + _favourited);
-            StateHasChanged();
+            _favourited = Prompt.FavouritedBy.Where(x => x.Id == LoggedInUser.Id).Any();
         }
+
+        Console.WriteLine(Prompt.Title + " " + _favourited);
+        StateHasChanged();
     }
 
     private void OpenDialog()
@@ -97,6 +98,7 @@
     private void ToggleFavourite()
     {
         favouriteData.ToggleFavouriteAsync(Prompt.Id, LoggedInUser.Id);
+        promptData.ToggleFavouriteOnPromptAsync(Prompt, LoggedInUser);
         _favourited = !_favourited;
     }
 }

@@ -14,7 +14,7 @@ public class Prompt
     public DateTime LastUpdatedDate { get; set; } = DateTime.UtcNow;
     public User LastUpdatedBy { get; set; }
     public Status Status { get; set; }
-    public IEnumerable<byte[]> Attachments { get; set; } = new List<byte[]>(5);
-    public IEnumerable<string> Tags { get; set; } = new List<string>(5);
-    public IEnumerable<string> FavouritedBy { get; set; } = new List<string>(5);
+    public List<byte[]> Attachments { get; set; } = new List<byte[]>(5);
+    public List<string> Tags { get; set; } = new List<string>();
+    public List<User> FavouritedBy { get; set; } = new List<User>();
 }

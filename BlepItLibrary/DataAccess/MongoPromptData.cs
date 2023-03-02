@@ -32,6 +32,25 @@ public class MongoPromptData : IPromptData
         return output;
     }
 
+    public async Task ToggleFavouriteOnPromptAsync(Prompt prompt, User user)
+    {
+        if (prompt is null)
+        {
+            throw new SocketException();
+        }
+
+        if (prompt.FavouritedBy.Contains(user))
+        {
+            prompt.FavouritedBy.Remove(user);
+        }
+        else
+        {
+            prompt.FavouritedBy.Add(user);
+        }
+
+        await UpdatePromptAsync(prompt);
+    }
+
     public async Task<List<Prompt>> GetPromptsForPageAsync(int page)
     {
         int pageSize = 12;
@@ -65,7 +84,7 @@ public class MongoPromptData : IPromptData
 
         return output;
     }
-    
+
     public async Task<long> GetCountOfPrompts()
     {
         return await _promptCollection.CountDocumentsAsync(x => x.Status == Status.Active);
