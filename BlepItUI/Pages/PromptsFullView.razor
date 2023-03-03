@@ -4,44 +4,7 @@
 @inject AuthenticationStateProvider authProvider
 @inject IUserData userData
 
-<MudStack>
-    <MudGrid>
-    @if (_promptPage.Any())
-    {
-        foreach (var prompt in _promptPage)
-        {
-        <MudItem lg="4" md="6" xs="12">
-            <CascadingValue Value="@loggedInUser">
-                <PromptCard Prompt="prompt" />
-            </CascadingValue>
-        </MudItem>
-        }
-    }
-    </MudGrid>
-    <MudPaper>
-        <MudGrid Class="d-flex align-center mud-width-full py-3">
-            <MudItem lg="1" xs="2"></MudItem>
-            <MudItem lg="1" xs="2"></MudItem>
-            <MudItem lg="8" xs="6">
-                <MudPagination Selected="_currentPage" Count="_totalPages" SelectedChanged="OnPageChanged" ShowFirstButton="true" 
-                    ShowLastButton="true" BoundaryCount="2" MiddleCount="3"  Class="justify-center mud-width-full" />
-            </MudItem>
-            <MudItem lg="1" xs="2">
-                <MudNumericField Margin="Margin.Dense" @bind-Value="_currentPage" Min="1" Max="_totalPages" Variant="Variant.Outlined" Label="Page" />
-            </MudItem>
-            <MudItem lg="1" xs="2">
-                <MudSelect T="int" @bind-Value="@_promptsPerPage" Variant="Variant.Outlined" SelectedValuesChanged="@(()=>OnPageChanged(_currentPage))" Margin="Margin.Dense" Label="# Per Page">
-                    <MudSelectItem Value="9" />
-                    <MudSelectItem Value="12" />
-                    <MudSelectItem Value="15" />
-                    <MudSelectItem Value="30" />
-                    <MudSelectItem Value="60" />
-                    <MudSelectItem Value="90" />
-                </MudSelect>
-            </MudItem>
-        </MudGrid>
-    </MudPaper>
-</MudStack>
+<PromptGrid />
 
 @code {
     private List<Prompt> _promptPage = new List<Prompt>();
@@ -55,7 +18,7 @@
     {
         loggedInUser = await authProvider.GetUserFromAuthAsync(userData);
 
-        _totalPromptCount = await promptData.CountAllActivePrompts();
+        _totalPromptCount = await promptData.CountAllActivePromptsAsync();
         _totalPages = (int)Math.Ceiling((double)_totalPromptCount / _promptsPerPage);
 
         _promptPage = await promptData.GetPromptsForPageAsync(_currentPage, _promptsPerPage);

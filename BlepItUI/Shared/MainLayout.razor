@@ -14,6 +14,7 @@
         <MudText Class="pl-4" Typo="Typo.h4" @onclick="GoHome">BlepIt - For AI Prompt Ideas</MudText>
         <MudSpacer />
         <MudStack AlignItems="AlignItems.Center" Row="true">
+            <SearchBar SearchString="searchTerm" OnSearchCallback="@PerformSearch"/>
             <MudDivider Vertical="true" FlexItem="true" />
             <MudToggleIconButton @bind-Toggled="@_isDarkMode" 
                 Color="Color.Surface" Icon="@Icons.Material.Filled.DarkMode"
@@ -29,7 +30,7 @@
             }
         </MudStack>
     </MudAppBar>
-    <MudDrawer Open="true" ClipMode="clipMode" Elevation="1" Variant="@DrawerVariant.Mini">
+    <MudDrawer Open="true" ClipMode="DrawerClipMode.Always" Elevation="1" Variant="@DrawerVariant.Mini">
         <MudNavMenu Bordered="false">
             @if (_loggedInUser != null)
             {
@@ -78,8 +79,10 @@
 </MudLayout>
 
 @code {
-    DrawerClipMode clipMode = DrawerClipMode.Always;
     private User _loggedInUser;
+    private MudTheme _theme = new();
+    private bool _isDarkMode = true;
+    private string _searchTerm = string.Empty;
 
     protected async override Task OnInitializedAsync()
     {
@@ -102,9 +105,6 @@
         _loggedInUser = await authProvider.GetUserFromAuthAsync(userData);
     }
 
-    private MudTheme _theme = new();
-    private bool _isDarkMode = true;
-
     private void GoHome()
     {
         navManager.NavigateTo("/");
@@ -113,5 +113,10 @@
     private void NavigateTo(string url)
     {
         navManager.NavigateTo($"/{url}");
+    }
+
+    private void PerformSearch(string searchText)
+    {
+        navManager.NavigateTo($"/Search/{searchText}");
     }
 }

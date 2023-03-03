@@ -66,6 +66,8 @@
 
         await userData.CreateMultipleUsersAsync(fakeUsers.Generate(100));
 
+        users = await userData.GetAllUsersAsync();
+
         showLoadingArt = false;
         StateHasChanged();
     }

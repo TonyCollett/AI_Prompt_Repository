@@ -61,9 +61,15 @@ public class MongoPromptData : IPromptData
         return allPrompts.Skip(skip).Take(pageSize).ToList();
     }
 
-    public async Task<long> CountAllActivePrompts()
+    public async Task<long> CountAllActivePromptsAsync()
     {
         return await _promptCollection.CountDocumentsAsync(t => t.Status == Status.Active);
+    }
+
+    public async Task<IEnumerable<Prompt>> SearchForPromptByTextAsync(string text)
+    {
+        var prompts = await GetAllActivePromptsAsync();
+        return prompts.FindAll(p => p.Description.Contains(text) || p.Title.Contains(text));
     }
 
     public async Task<Prompt> GetPromptAsync(string id)
