@@ -49,21 +49,21 @@ public class MongoPromptData : IPromptData
             prompt.FavouritedBy.Add(userId);
         }
 
-        await UpdatePromptAsync(prompt);
+        await _promptCollection.ReplaceOneAsync(p => p.Id == prompt.Id, prompt);
     }
 
-    public async Task<List<Prompt>> GetPromptsForPageAsync(int page)
+    public async Task<List<Prompt>> GetPromptsForPageAsync(int page, int promptsPerPage)
     {
-        int pageSize = 12;
+        int pageSize = promptsPerPage;
         int skip = (page - 1) * pageSize;
 
-        var results = await _promptCollection.FindAsync(t => t.Status == Status.Active,
-            new FindOptions<Prompt>
-            {
-                Skip = skip,
-                Limit = pageSize
-            });
-        return results.ToList();
+        var allPrompts = await GetAllActivePromptsAsync();
+        return allPrompts.Skip(skip).Take(pageSize).ToList();
+    }
+
+    public async Task<long> CountAllActivePrompts()
+    {
+        return await _promptCollection.CountDocumentsAsync(t => t.Status == Status.Active);
     }
 
     public async Task<Prompt> GetPromptAsync(string id)
