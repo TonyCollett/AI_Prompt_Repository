@@ -1,0 +1,35 @@
+@page "/Search/{serachTerm}"
+@inject IPromptData promptData
+@inject NavigationManager navManager
+@inject AuthenticationStateProvider authProvider
+@inject IUserData userData
+
+<PromptGrid />
+
+@code {
+    private List<Prompt> _promptPage = new List<Prompt>();
+    private int _currentPage = 1;
+    private int _totalPages = 0;
+    private int _promptsPerPage = 12;
+    private long _totalPromptCount = 0;
+    public User loggedInUser = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loggedInUser = await authProvider.GetUserFromAuthAsync(userData);
+
+        _totalPromptCount = await promptData.CountAllActivePromptsAsync();
+        _totalPages = (int)Math.Ceiling((double)_totalPromptCount / _promptsPerPage);
+
+        _promptPage = await promptData.GetPromptsForPageAsync(_currentPage, _promptsPerPage);
+    }
+
+    private async Task OnPageChanged(int newPage)
+    {
+        _currentPage = newPage;
+        _totalPages = (int)Math.Ceiling((double)_totalPromptCount / _promptsPerPage);
+        _promptPage = await promptData.GetPromptsForPageAsync(_currentPage, _promptsPerPage);
+
+        StateHasChanged();
+    }
+}
