@@ -1,33 +1,20 @@
 ﻿@inject IUserData userData
+@inject IPromptData promptData
 @attribute [Authorize]
 
 @if (_user != null) {
     <MudPaper>
         <MudGrid>
             <MudItem xs="4">
-
-            </MudItem>
-            <MudItem xs="4">
-                <MudPaper>
-                    <MudText Typo="Typo.caption">Profile Picture Here</MudText>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="4">
-
-            </MudItem>
-
-            <MudItem xs="4">
                 <MudStack>
-                    <MudTextField Value="@_user.FirstName" Label="First Name" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
-                    <MudTextField Value="@_user.LastName" Label="Last Name" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
-                    <MudCheckBox Checked="@_user.UserSettings.IsUserVIP" Label="VIP" Color="Color.Primary" />
+                    <MudTextField Value="@_user?.FirstName" Label="First Name" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
+                    <MudTextField Value="@_user?.LastName" Label="Last Name" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
                 </MudStack>
             </MudItem>
-            <MudItem xs="4">
-                <MudPaper>
-                    <MudTextField Value="@_user.DisplayName" Label="Display Name" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense" />
-                </MudPaper>
-            </MudItem>
+            @foreach (var prompt in _favouritePrompts)
+            {
+                <MudText>@prompt.Title</MudText>
+            }
         </MudGrid>
     </MudPaper>
 }
@@ -38,10 +25,12 @@
     public string UserId { get; set; }
 
     private User _user { get; set; }
+    private List<Prompt> _favouritePrompts { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        _user =await userData.GetUserByBsonIdAsync(UserId);
+        _user = await userData.GetUserByBsonIdAsync(UserId);
+        _favouritePrompts = await promptData.GetPromptsByIdsAsync(_user.FavouritePrompts);
     }
 
 }

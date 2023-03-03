@@ -13,4 +13,5 @@ public interface IPromptData
     Task UpdatePromptAsync(Prompt prompt);
     Task CreatePromptAsync(Prompt prompt);
     Task CreateMultiplePromptsAsync(IEnumerable<Prompt> prompts);
+    Task<List<Prompt>> GetPromptsByIdsAsync(IEnumerable<string> promptIds);
 }

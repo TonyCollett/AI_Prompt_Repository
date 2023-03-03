@@ -1,4 +1,6 @@
-﻿namespace BlepItLibrary.DataAccess;
+﻿using System.Net.Sockets;
+
+namespace BlepItLibrary.DataAccess;
 public class MongoUserData : IUserData
 {
     private readonly IMongoCollection<User> _users;
@@ -30,6 +32,25 @@ public class MongoUserData : IUserData
     {
         var results = await _users.FindAsync(u => u.ObjectIdentifier == objectId);
         return results.FirstOrDefault();
+    }
+
+    public async Task ToggleFavouriteOnUserAsync(User user, string promptId)
+    {
+        if (user is null)
+        {
+            throw new SocketException();
+        }
+
+        if (user.FavouritePrompts.Contains(promptId))
+        {
+            user.FavouritePrompts.Remove(promptId);
+        }
+        else
+        {
+            user.FavouritePrompts.Add(promptId);
+        }
+
+        await _users.ReplaceOneAsync(u => u.Id == user.Id, user);
     }
 
     public async Task CreateUserAsync(User user)

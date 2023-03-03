@@ -33,6 +33,12 @@ public class MongoPromptData : IPromptData
         return output;
     }
 
+    public async Task<List<Prompt>> GetPromptsByIdsAsync(IEnumerable<string> promptIds)
+    {
+        var allPrompts = await GetAllActivePromptsAsync();
+        return allPrompts.FindAll(p => promptIds.Contains(p.Id));
+    }
+
     public async Task ToggleFavouriteOnPromptAsync(Prompt prompt, string userId)
     {
         if (prompt is null)

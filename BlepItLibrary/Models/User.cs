@@ -15,9 +15,9 @@ public class User
     public VIPStatus VIPStatus { get; set; } = VIPStatus.None;
     public UserSettings UserSettings { get; set; }
     public byte[] ProfilePicture { get; set; }
-    public IEnumerable<Notification> Notifications { get; set; }
-    public IEnumerable<string> CreatedPrompts { get; set; }
-    public IEnumerable<string> FavouritePrompts { get; set; }
+    public List<Notification> Notifications { get; set; }
+    public List<string> CreatedPrompts { get; set; }
+    public List<string> FavouritePrompts { get; set; }
 
     public override bool Equals(object? o)
     {

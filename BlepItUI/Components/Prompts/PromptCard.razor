@@ -53,8 +53,6 @@
             }
         </MudCardActions>
     </MudCard>
-
-    
 }
 
 @code {
@@ -87,6 +85,7 @@
     {
         favouriteData.ToggleFavouriteAsync(Prompt.Id, LoggedInUser.Id);
         promptData.ToggleFavouriteOnPromptAsync(Prompt, LoggedInUser.Id);
+        userData.ToggleFavouriteOnUserAsync(LoggedInUser, Prompt.Id);
         _favourited = !_favourited;
     }
 }
