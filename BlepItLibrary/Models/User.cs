@@ -35,5 +35,6 @@ public class User
 public enum VIPStatus
 {
     None,
-    Paid
+    Paid,
+    Admin
 }

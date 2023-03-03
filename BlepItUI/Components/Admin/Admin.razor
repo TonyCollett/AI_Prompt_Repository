@@ -1,38 +1,41 @@
+@page "/admin"
 @inject ICommentData commentData
 @inject IUserData userData
 @inject IPromptData promptData
 @inject IDbConnection dbConnection
-@namespace BlepItUI.Components.AppSettings
+@attribute [Authorize]
 
 <MudOverlay @bind-Visible="showLoadingArt" DarkBackground="true" ZIndex="9999" AutoClose="true">
      <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
 </MudOverlay>
 
-<MudDialog>
-    <DialogContent>
+<MudGrid>
+    <MudItem lg="2">
         <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="GenerateRandomUsers">
             Generate Sample Random User Data
         </MudButton>
-        <MudDivider />
+    </MudItem>
+    <MudItem lg="2">
         <MudButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="GenerateSamplePromptData">
             Generate Sample Prompt Data
         </MudButton>
-        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" @onclick="GenerateRandomCommentsAsync">
+    </MudItem>
+    <MudDivider />
+    <MudItem lg="2">
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Disabled="true" @onclick="GenerateRandomCommentsAsync">
             Generate Sample Comments Data
         </MudButton>
-        <MudDivider />
+    </MudItem>
+    <MudDivider />
+    <MudItem lg="2">
         <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick="ClearAllData">
             Clear All Data
         </MudButton>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="(() => MudDialog.Close(DialogResult.Ok(true)))">Done</MudButton>
-    </DialogActions>
-</MudDialog>
+    </MudItem>
+</MudGrid>
+
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Parameter] public User LoggedInUser { get; set; }
 
     private bool showLoadingArt;
 
@@ -83,6 +86,8 @@
         var prompts = fakePrompts.GenerateBetween(1000, 3000);
 
         await promptData.CreateMultiplePromptsAsync(prompts);
+
+        prompts = await promptData.GetAllActivePromptsAsync();
 
         showLoadingArt = false;
         StateHasChanged();

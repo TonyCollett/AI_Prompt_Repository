@@ -25,6 +25,14 @@
                         Profile
                     </a>
                 </MudMenuItem>
+                @if (LoggedInUser?.VIPStatus == VIPStatus.Admin)
+                {
+                    <MudMenuItem>
+                        <a href="/Admin">
+                            Admin
+                        </a>
+                    </MudMenuItem>
+                }
                 <MudMenuItem>
                     User Settings
                 </MudMenuItem>
