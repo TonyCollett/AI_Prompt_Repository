@@ -5,7 +5,7 @@ public interface IPromptData
 {
     Task<List<Prompt>> GetAllActivePromptsAsync();
     Task ToggleFavouriteOnPromptAsync(Prompt prompt, string userId);
-    Task<List<Prompt>> GetPromptsForPageAsync(int page, int promptsPerPage);
+    Task<List<Prompt>> GetPromptsForPageAsync(int page, int promptsPerPage, string searchText = "");
     Task<long> CountAllActivePromptsAsync();
     Task<IEnumerable<Prompt>> SearchForPromptByTextAsync(string text);
     Task<Prompt> GetPromptAsync(string id);

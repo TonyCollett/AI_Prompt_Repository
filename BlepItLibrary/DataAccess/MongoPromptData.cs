@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Net.Sockets;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BlepItLibrary.DataAccess;
 public class MongoPromptData : IPromptData
@@ -58,12 +59,24 @@ public class MongoPromptData : IPromptData
         await _promptCollection.ReplaceOneAsync(p => p.Id == prompt.Id, prompt);
     }
 
-    public async Task<List<Prompt>> GetPromptsForPageAsync(int page, int promptsPerPage)
+    public async Task<List<Prompt>> GetPromptsForPageAsync(int page, int promptsPerPage, string searchText = "")
     {
         int pageSize = promptsPerPage;
         int skip = (page - 1) * pageSize;
 
         var allPrompts = await GetAllActivePromptsAsync();
+
+        allPrompts = allPrompts.Where(prompt =>
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+                return true;
+            if (prompt.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (prompt.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                return true;
+            return false;
+        }).ToList();
+
         return allPrompts.Skip(skip).Take(pageSize).ToList();
     }
 
