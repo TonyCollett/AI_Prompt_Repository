@@ -29,8 +29,8 @@
                 <MudTooltip Text="Favourite" Arrow="true" Placement="Placement.Bottom" Color="Color.Primary">
                     <MudBadge Content="@Prompt.FavouritedBy.Count().ToString()" Overlap="true" Origin="Origin.TopLeft" Color="Color.Secondary">
                         <MudToggleIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary"
-                                     ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="Color.Secondary"
-                                         Toggled="@Prompt.FavouritedBy.Contains(LoggedInUser.Id)" ToggledChanged="ToggleFavourite" />
+                                             ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="Color.Secondary"
+                                             Toggled="@Prompt.FavouritedBy.Contains(LoggedInUser.Id)" ToggledChanged="ToggleFavourite" />
                     </MudBadge>
                 </MudTooltip>
             }
@@ -58,6 +58,8 @@
 @code {
     [Parameter] 
     public Prompt Prompt { get; set; }
+    [Parameter]
+    public string HighlightText { get; set; }
 
     [CascadingParameter] 
     public User LoggedInUser { get; set; }

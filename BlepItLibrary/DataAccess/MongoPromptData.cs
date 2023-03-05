@@ -59,6 +59,8 @@ public class MongoPromptData : IPromptData
         await _promptCollection.ReplaceOneAsync(p => p.Id == prompt.Id, prompt);
     }
 
+    private int _promptCount = 0;
+
     public async Task<List<Prompt>> GetPromptsForPageAsync(int page, int promptsPerPage, string searchText = "")
     {
         int pageSize = promptsPerPage;
@@ -69,20 +71,31 @@ public class MongoPromptData : IPromptData
         allPrompts = allPrompts.Where(prompt =>
         {
             if (string.IsNullOrWhiteSpace(searchText))
+            {
                 return true;
+            }
+
             if (prompt.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            {
                 return true;
+            }
+
             if (prompt.Description.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            {
                 return true;
+            }
+
             return false;
         }).ToList();
+
+        _promptCount = allPrompts.Count;
 
         return allPrompts.Skip(skip).Take(pageSize).ToList();
     }
 
-    public async Task<long> CountAllActivePromptsAsync()
+    public int CountAllActivePrompts()
     {
-        return await _promptCollection.CountDocumentsAsync(t => t.Status == Status.Active);
+        return _promptCount;
     }
 
     public async Task<IEnumerable<Prompt>> SearchForPromptByTextAsync(string text)
