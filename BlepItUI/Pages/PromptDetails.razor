@@ -8,35 +8,33 @@
 @if (prompt != null)
 {
     <MudPaper Class="pa-3" Elevation="4">
-    <MudGrid>
-        <MudItem xs="12">
-            <MudStack Spacing="8" AlignItems="AlignItems.Center" Row="true">
-                <MudAvatar Color="Color.Warning" Variant="Variant.Filled">
-                    <MudIcon Color="Color.Dark" Icon="@Icons.Custom.Uncategorized.Radioactive" Size="Size.Large" />
-                </MudAvatar>
-                <MudText Typo="Typo.h4">@prompt.Title</MudText>
-            </MudStack>
-        </MudItem>
-        <MudItem xs="12">
-            <MudStack>
-                <MudItem lg="12" sm="12">
-                    <MudTextField Variant="Variant.Outlined" T="string" Label="Title" Value="@prompt.Title" ReadOnly="true" />
-                </MudItem>
-                <MudItem lg="12" sm="12">
-                    <MudTextField Variant="Variant.Outlined" T="string" Label="Description" Value="@prompt.Description" Lines="5" ReadOnly="true" />
-                </MudItem>
-            </MudStack>
-        </MudItem>
+        <MudGrid>
+            <MudItem xs="12">
+                <MudStack Spacing="8" AlignItems="AlignItems.Center" Row="true">
+                    <MudAvatar Color="Color.Warning" Variant="Variant.Filled">
+                        <MudIcon Color="Color.Dark" Icon="@Icons.Custom.Uncategorized.Radioactive" Size="Size.Large" />
+                    </MudAvatar>
+                    <MudText Typo="Typo.h4">@prompt.Title</MudText>
+                </MudStack>
+            </MudItem>
+            <MudItem xs="12">
+                <MudStack>
+                    <MudItem lg="12" sm="12">
+                        <MudTextField Variant="Variant.Outlined" T="string" Label="Title" Value="@prompt.Title" ReadOnly="true" />
+                    </MudItem>
+                    <MudItem lg="12" sm="12">
+                        <MudTextField Variant="Variant.Outlined" T="string" Label="Description" Value="@prompt.Description" Lines="5" ReadOnly="true" />
+                    </MudItem>
+                </MudStack>
+            </MudItem>
 
-        <MudItem xs="3">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="EditPrompt" Class="ml-auto" Disabled="false">
-                Edit
-            </MudButton>
-        </MudItem>
+            <MudItem xs="3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="EditPrompt" Class="ml-auto" Disabled="false">
+                    Edit
+                </MudButton>
+            </MudItem>
 
-    </MudGrid>
-
-
+        </MudGrid>
     </MudPaper>
 }
 else
