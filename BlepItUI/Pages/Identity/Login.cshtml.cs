@@ -10,7 +10,7 @@ namespace BlepItUI.Pages.Identity
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        public IActionResult OnGetAsync(string returnUrl = null)
+        public IActionResult OnGet(string returnUrl = null)
         {
             string provider = "Google";
             // Request a redirect to the external login provider.
@@ -22,7 +22,7 @@ namespace BlepItUI.Pages.Identity
             };
             return new ChallengeResult(provider, authenticationProperties);
         }
-        public async Task<IActionResult> OnGetCallbackAsync(
+        public async Task<IActionResult> OnGetCallback(
             string returnUrl = null, string remoteError = null)
         {
             // Get the information about the user from the external login provider

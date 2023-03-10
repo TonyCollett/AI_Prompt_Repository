@@ -5,7 +5,6 @@
 
 @if (User.Identity.Name != null)
 {
-    <img src="@Avatar" />
     <b>You are logged in as: @GivenName @Surname</b>
     <a class="ml-md-auto btn btn-primary"
        href="/Identity/Logout"
@@ -16,17 +15,13 @@ else
     <a class="ml-md-auto btn btn-primary"
        href="/Identity/Login"
        target="_top">Login</a>
-
-    <a class="ml-md-auto btn btn-primary"
-       href="/authentication/login?authenticationScheme=Google"
-       target="_top">Login2</a>
 }
 
 @code {
     private ClaimsPrincipal User;
     private string GivenName;
     private string Surname;
-    private string Avatar;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -58,17 +53,17 @@ else
             {
                 Surname = "";
             }
-            // Try to get Avatar
-            var avatar =
-            _httpContextAccessor.HttpContext.User
-            .FindFirst("urn:google:image");
-            if (avatar != null)
+            // Try to get the nameIdentifier
+            var nameIdentifier =
+                _httpContextAccessor.HttpContext.User
+                .FindFirst(ClaimTypes.NameIdentifier);
+            if (nameIdentifier != null)
             {
-                Avatar = avatar.Value;
+                GivenName = givenName.Value;
             }
             else
             {
-                Avatar = "";
+                GivenName = User.Identity.Name;
             }
         }
         catch { }

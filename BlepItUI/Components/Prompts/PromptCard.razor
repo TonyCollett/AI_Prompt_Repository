@@ -30,7 +30,7 @@
                     <MudBadge Content="@Prompt.FavouritedBy.Count().ToString()" Overlap="true" Origin="Origin.TopLeft" Color="Color.Secondary">
                         <MudToggleIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary"
                                              ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="Color.Secondary"
-                                             Toggled="@Prompt.FavouritedBy.Contains(LoggedInUser.Id)" ToggledChanged="ToggleFavourite" />
+                                             Toggled="@Prompt.FavouritedBy.Contains("12345")" ToggledChanged="ToggleFavourite" />
                     </MudBadge>
                 </MudTooltip>
             }
