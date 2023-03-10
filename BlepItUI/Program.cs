@@ -1,9 +1,43 @@
-using Microsoft.AspNetCore.Rewrite;
-using BlepItUI;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using MudBlazor;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ConfigureServices();
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+});
+builder.Services.AddMemoryCache();
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        IConfigurationSection googleAuthNSection =
+                builder.Configuration.GetSection("Authentication:Google");
+        options.ClientId = googleAuthNSection["ClientId"];
+        options.ClientSecret = googleAuthNSection["ClientSecret"];
+        options.CallbackPath = "/signin-google";
+    });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<HttpContextAccessor>();
+
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<HttpClient>();
+
+builder.Services.AddSingleton<IDbConnection, DbConnection>();
+builder.Services.AddTransient<IUserData, MongoUserData>();
+builder.Services.AddTransient<IPromptData, MongoPromptData>();
+builder.Services.AddTransient<ICommentData, MongoCommentData>();
+builder.Services.AddTransient<IFavouriteData, MongoFavouriteData>();
+builder.Services.AddTransient<INotificationData, MongoNotificationData>();
 
 var app = builder.Build();
 
@@ -18,24 +52,12 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
-
-app.UseRouting();
-
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseRewriter(
-    new RewriteOptions().Add(
-        context =>
-        {
-            if (context.HttpContext.Request.Path == "/MicrosoftIdentity/Account/SignedOut")
-            {
-                context.HttpContext.Response.Redirect("/");
-            }
-        }
-        ));
+app.UseRouting();
 
-app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
