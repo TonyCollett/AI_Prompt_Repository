@@ -17,8 +17,8 @@ public class User
     public UserSettings UserSettings { get; set; }
     public byte[] ProfilePicture { get; set; }
     public List<Notification> Notifications { get; set; }
-    public List<string> CreatedPrompts { get; set; }
-    public List<string> FavouritePrompts { get; set; }
+    public List<string> CreatedPrompts { get; set; } = new List<string>();
+    public List<string> FavouritePrompts { get; set; } = new List<string>();
 
     public override bool Equals(object? o)
     {

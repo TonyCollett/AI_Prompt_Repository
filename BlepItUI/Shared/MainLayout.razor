@@ -20,7 +20,6 @@
                 Color="Color.Surface" Icon="@Icons.Material.Filled.DarkMode"
                 ToggledColor="Color.Primary" ToggledIcon="@Icons.Material.Filled.LightMode" />
             <MudDivider Vertical="true" FlexItem="true" />
-            <BlepItUI.Pages.LoginControl />
             @if(_loggedInUser != null)
             {
             <LoginDisplay LoggedInUser="@_loggedInUser" />

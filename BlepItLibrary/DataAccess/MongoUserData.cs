@@ -28,6 +28,11 @@ public class MongoUserData : IUserData
         return results.FirstOrDefault().DisplayName;
     }
 
+    public async Task<bool> IsUserRegisteredAsync(string nameIdentifier)
+    {
+        return await _users.Find(u => u.ObjectIdentifier == nameIdentifier).AnyAsync();
+    }
+
     public async Task<User> GetUserFromAuthentication(string objectId)
     {
         var results = await _users.FindAsync(u => u.ObjectIdentifier == objectId);

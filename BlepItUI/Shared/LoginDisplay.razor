@@ -1,3 +1,7 @@
+@using System.Security.Claims
+@inject IUserData userData
+@inject IHttpContextAccessor _httpContextAccessor
+
 <AuthorizeView>
     <Authorized>
         <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" FullWidth="true">
@@ -37,7 +41,7 @@
                     User Settings
                 </MudMenuItem>
                 <MudMenuItem>
-                    <a href="MicrosoftIdentity/Account/SignOut">
+                    <a href="/Identity/Logout">
                         Logout
                     </a>
                 </MudMenuItem>
@@ -55,10 +59,7 @@
             </ActivatorContent>
             <ChildContent>
                 <MudMenuItem>
-                    <MudButton Href="MicrosoftIdentity/Account/SignIn" Variant="Variant.Filled" Color="Color.Primary">Create Account</MudButton>
-                </MudMenuItem>
-                <MudMenuItem>
-                    <MudButton Href="MicrosoftIdentity/Account/SignIn" Variant="Variant.Filled" Color="Color.Primary">Login</MudButton>
+                    <MudButton Href="/Identity/Login" Variant="Variant.Filled" Color="Color.Primary">Register/Login</MudButton>
                 </MudMenuItem>
             </ChildContent>
         </MudMenu>
@@ -68,4 +69,44 @@
 @code {
     [Parameter]
     public User LoggedInUser { get; set; }
+
+    private ClaimsPrincipal User;
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        try
+        {
+            // Set the user to determine if they are logged in
+            User = _httpContextAccessor.HttpContext.User;
+
+            Claim nameIdentifier = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            Claim givenName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GivenName);
+            Claim surname = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname);
+            Claim email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email);
+
+            if (nameIdentifier != null)
+            {
+                bool checkUserIsRegistered = await userData.IsUserRegisteredAsync(nameIdentifier.Value);
+
+                if (checkUserIsRegistered)
+                {
+                    var existingUser = await userData.GetUserFromAuthentication(nameIdentifier.Value);
+                } 
+                else
+                {
+                    User newUser = new User()
+                    {
+                        ObjectIdentifier = nameIdentifier.Value,
+                        FirstName = givenName?.Value,
+                        LastName = surname?.Value,
+                        EmailAddress = email?.Value,
+                    };
+
+                    await userData.CreateUserAsync(newUser);
+                }
+            }
+        }
+        catch { }
+    }
 }
