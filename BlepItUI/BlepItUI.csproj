@@ -12,6 +12,7 @@
     <Content Remove="Services\**" />
     <EmbeddedResource Remove="Services\**" />
     <None Remove="Services\**" />
+    <None Remove="Components\Account\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,4 +31,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\Account\" />
+  </ItemGroup>
 </Project>
