@@ -21,30 +21,14 @@
                 </MudStack>
             </ActivatorContent>
             <ChildContent>
-                <MudMenuItem>
-                    Notifications
-                </MudMenuItem>
-                <MudMenuItem>
-                    <a href="/Profile/@LoggedInUser?.Id">
-                        Profile
-                    </a>
-                </MudMenuItem>
+                <MudMenuItem>Notifications</MudMenuItem>
+                <MudMenuItem href="/Profile/@LoggedInUser?.Id">Profile</MudMenuItem>
                 @if (LoggedInUser?.VIPStatus == VIPStatus.Admin)
                 {
-                    <MudMenuItem>
-                        <a href="/Admin">
-                            Admin
-                        </a>
-                    </MudMenuItem>
+                    <MudMenuItem Href="/Admin">Admin</MudMenuItem>
                 }
-                <MudMenuItem>
-                    User Settings
-                </MudMenuItem>
-                <MudMenuItem>
-                    <a href="/Identity/Logout">
-                        Logout
-                    </a>
-                </MudMenuItem>
+                <MudMenuItem Href="/Account">User Settings</MudMenuItem>
+                <MudMenuItem Href="/Identity/Logout">Logout</MudMenuItem>
             </ChildContent>
         </MudMenu>
     </Authorized>
@@ -72,30 +56,30 @@
 
     private ClaimsPrincipal User;
 
-    protected async override void OnInitialized()
+    protected override async void OnInitialized()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
         try
         {
             // Set the user to determine if they are logged in
             User = _httpContextAccessor.HttpContext.User;
 
-            Claim nameIdentifier = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            Claim givenName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GivenName);
-            Claim surname = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname);
-            Claim email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email);
+            var nameIdentifier = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
+            var givenName = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GivenName);
+            var surname = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Surname);
+            var email = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email);
 
             if (nameIdentifier != null)
             {
-                bool checkUserIsRegistered = await userData.IsUserRegisteredAsync(nameIdentifier.Value);
+                var checkUserIsRegistered = await userData.IsUserRegisteredAsync(nameIdentifier.Value);
 
                 if (checkUserIsRegistered)
                 {
                     var existingUser = await userData.GetUserFromAuthentication(nameIdentifier.Value);
-                } 
+                }
                 else
                 {
-                    User newUser = new User()
+                    var newUser = new User()
                     {
                         ObjectIdentifier = nameIdentifier.Value,
                         FirstName = givenName?.Value,

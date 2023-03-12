@@ -12,7 +12,7 @@ namespace BlepItUI.Pages.Identity
     {
         public IActionResult OnGet(string returnUrl = null)
         {
-            string provider = "Google";
+            const string provider = "Google";
             // Request a redirect to the external login provider.
             var authenticationProperties = new AuthenticationProperties
             {
@@ -35,10 +35,12 @@ namespace BlepItUI.Pages.Identity
                     RedirectUri = this.Request.Host.Value
                 };
                 await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(GoogleUser),
-                authProperties);
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(GoogleUser),
+                    authProperties);
+                return LocalRedirect("/");
             }
+
             return LocalRedirect("/");
         }
     }
