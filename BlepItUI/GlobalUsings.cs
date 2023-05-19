@@ -1,0 +1,13 @@
+﻿global using BlepItLibrary.DataAccess;
+global using BlepItLibrary.DataAccess.DTClasses;
+global using BlepItLibrary.DataAccess.Interfaces;
+global using BlepItLibrary.Enums;
+global using BlepItLibrary.Models;
+global using BlepItUI.Helpers;
+global using Bogus;
+global using Microsoft.AspNetCore.Authentication.Cookies;
+global using Microsoft.AspNetCore.Components.Authorization;
+global using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+global using MudBlazor;
+global using MudBlazor.Services;
+global using SocialMediaSharingBlazor;

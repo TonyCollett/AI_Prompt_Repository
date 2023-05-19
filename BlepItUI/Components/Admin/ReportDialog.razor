@@ -1,0 +1,48 @@
+<MudDialog>
+    <DialogContent>
+        <MudStack>
+            <MudSelect T="string" @bind-Value="_reason" Variant="Variant.Outlined" Label="Reason" Margin="Margin.Dense" Required="true" RequiredError="Select a Reason" >
+                <MudSelectItem Value="@("Spam")"/>
+                <MudSelectItem Value="@("Inappropriate")"/>
+                <MudSelectItem Value="@("Duplicate")"/>
+                <MudSelectItem Value="@("Illegal")"/>
+                <MudSelectItem Value="@("Harassment")"/>
+                <MudSelectItem Value="@("Formatting")"/>
+            </MudSelect>
+            <MudTextField @bind-Value="_description" Lines="2" Variant="Variant.Outlined" Label="Description" Required="true" RequiredError="Please provide a description" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    public MudDialogInstance MudDialog { get; set; }
+    
+    [Parameter]
+    public User LoggedInUser { get; set; }
+    [Parameter] 
+    public Prompt Prompt { get; set; }
+    
+    private string _reason;
+    private string _description;
+    
+    private async Task Submit()
+    {
+        await promptData.ReportPromptAsync(Prompt, report: new Report
+        {
+            PromptId = Prompt.Id,
+            Reason = _reason,
+            Description = _description,
+            ReportedBy = LoggedInUser,
+            IpAddress = httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString()
+        });
+        
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

@@ -1,0 +1,33 @@
+﻿@using System.Net.Http
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using MudBlazor
+@using SocialMediaSharingBlazor
+@using BlepItUI
+@using BlepItUI.Shared
+@using BlepItUI.Components
+@using BlepItUI.Components.Admin
+@using BlepItUI.Components.Prompts
+@using BlepItUI.Components.Comments
+@using BlepItUI.Components.Users
+@using BlepItUI.Components.Layout
+@using BlepItUI.Components.Account
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+
+@inject ProtectedLocalStorage protectedLocalStorage
+@inject NavigationManager navManager
+@inject AuthenticationStateProvider authProvider
+@inject IHttpContextAccessor httpContextAccessor
+@inject ISocialMediaSharing socialMediaSharing
+@inject IUserData userData
+@inject IPromptData promptData
+@inject ICommentData commentData
+@inject IFavouriteData favouriteData
+@inject IDialogService dialogService
+@inject ISnackbar snackbar
+@inject IDbConnection dbConnection
